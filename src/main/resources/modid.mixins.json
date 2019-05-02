@@ -3,9 +3,11 @@
   "package": "net.fabricmc.example.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinEntityPlayer"
   ],
   "client": [
-    "ExampleMixin"
+    "ExampleMixin",
+    "MixinGL"
   ],
   "injectors": {
     "defaultRequire": 1
