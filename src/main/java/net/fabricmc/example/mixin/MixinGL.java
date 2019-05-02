@@ -1,6 +1,7 @@
 package net.fabricmc.example.mixin;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.fabricmc.example.IGameRenderExtension;
 import net.fabricmc.example.IPlayerEntityExtension;
 import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.client.MinecraftClient;
@@ -13,9 +14,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 
 @Mixin(GameRenderer.class)
-public abstract class MixinGL{
+public abstract class MixinGL implements IGameRenderExtension {
 
     @Shadow
     @Final
@@ -77,11 +83,21 @@ public abstract class MixinGL{
     @Shadow
     public int field_4021;
 
-
+    private List<Consumer<MinecraftClient>> onRenderEventHandlers = new ArrayList<>();
+    public void AddOnRenderEventHandler(Consumer<MinecraftClient> eventHandler){
+        onRenderEventHandlers.add(eventHandler);
+    }
 
     //@Inject(method="renderCenter", at=@At("HEAD"), cancellable = true)
     @Overwrite
     private void renderCenter(float float_1, long long_1){// CallbackInfo cbi){
+        for(Consumer<MinecraftClient> handler : onRenderEventHandlers){
+            handler.accept(MinecraftClient.getInstance());
+        }
+
+
+
+
 
         float imageRatio = (float)this.client.window.getFramebufferWidth()/this.client.window.getFramebufferHeight();
         float isoScale = ((IPlayerEntityExtension)MinecraftClient.getInstance().player).getIsoScale();
