@@ -10,18 +10,17 @@ public class KeyBinding {
     private boolean wasPressed = false;
     private boolean isPressed = false;
 
-    public KeyBinding(FabricKeyBinding keyBind){
+    public KeyBinding(FabricKeyBinding keyBind) {
         this.keyBind = keyBind;
         KeyBindingRegistry.INSTANCE.register(keyBind);
-        ClientTickCallback.EVENT.register(e->{
-            if(this.keyBind.isPressed()){
-                if(isPressed){
+        ClientTickCallback.EVENT.register(e -> {
+            if (this.keyBind.isPressed()) {
+                if (isPressed) {
                     wasPressed = true;
                 }
                 isPressed = true;
-            }
-            else{
-                if(!isPressed){
+            } else {
+                if (!isPressed) {
                     wasPressed = false;
                 }
                 isPressed = false;
@@ -29,15 +28,15 @@ public class KeyBinding {
         });
     }
 
-    boolean wasPressed(){
+    boolean wasPressed() {
         return wasPressed;
     }
 
-    boolean isPressed(){
+    boolean isPressed() {
         return isPressed;
     }
 
-    FabricKeyBinding getKeyBind(){
+    FabricKeyBinding getKeyBind() {
         return keyBind;
     }
 

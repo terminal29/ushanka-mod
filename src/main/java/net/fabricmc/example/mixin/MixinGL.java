@@ -84,24 +84,22 @@ public abstract class MixinGL implements IGameRenderExtension {
     public int field_4021;
 
     private List<Consumer<MinecraftClient>> onRenderEventHandlers = new ArrayList<>();
-    public void AddOnRenderEventHandler(Consumer<MinecraftClient> eventHandler){
+
+    public void AddOnRenderEventHandler(Consumer<MinecraftClient> eventHandler) {
         onRenderEventHandlers.add(eventHandler);
     }
 
     //@Inject(method="renderCenter", at=@At("HEAD"), cancellable = true)
     @Overwrite
-    private void renderCenter(float float_1, long long_1){// CallbackInfo cbi){
-        for(Consumer<MinecraftClient> handler : onRenderEventHandlers){
+    private void renderCenter(float float_1, long long_1) {// CallbackInfo cbi){
+        for (Consumer<MinecraftClient> handler : onRenderEventHandlers) {
             handler.accept(MinecraftClient.getInstance());
         }
 
 
-
-
-
-        float imageRatio = (float)this.client.window.getFramebufferWidth()/this.client.window.getFramebufferHeight();
-        float isoScale = ((IPlayerEntityExtension)MinecraftClient.getInstance().player).getIsoScale();
-        float isoDistance = ((IPlayerEntityExtension)MinecraftClient.getInstance().player).getIsoDistance();
+        float imageRatio = (float) this.client.window.getFramebufferWidth() / this.client.window.getFramebufferHeight();
+        float isoScale = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoScale();
+        float isoDistance = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoDistance();
 
         //cbi.cancel();
         WorldRenderer worldRenderer_1 = this.client.worldRenderer;
@@ -110,17 +108,17 @@ public abstract class MixinGL implements IGameRenderExtension {
         GlStateManager.enableCull();
         this.client.getProfiler().swap("camera");
         {
-            this.viewDistance = (float)(this.client.options.viewDistance * 16);
+            this.viewDistance = (float) (this.client.options.viewDistance * 16);
             GlStateManager.matrixMode(5889);
             GlStateManager.loadIdentity();
             if (this.field_4005 != 1.0D) {
                 //GlStateManager.translatef((float)this.field_3988, (float)(-this.field_4004), 0.0F);
                 //GlStateManager.scaled(this.field_4005, this.field_4005, 1.0D);
             }
-            GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -isoDistance * this.viewDistance , isoDistance * this.viewDistance);
+            GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -isoDistance * this.viewDistance, isoDistance * this.viewDistance);
         }
         Camera camera_1 = this.camera;
-        camera_1.update(this.client.world, (Entity)(this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
+        camera_1.update(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
         Frustum frustum_1 = GlMatrixFrustum.get();
         this.client.getProfiler().swap("clear");
         GlStateManager.viewport(0, 0, this.client.window.getFramebufferWidth(), this.client.window.getFramebufferHeight());

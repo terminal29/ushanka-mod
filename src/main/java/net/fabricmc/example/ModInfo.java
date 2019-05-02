@@ -2,6 +2,7 @@ package net.fabricmc.example;
 
 public class ModInfo {
     public static final String DISPLAY_NAME = "ushanka";
+
     public class Keybinds {
         public static final String KEYBIND_CATEGORY = "controls." + ModInfo.DISPLAY_NAME;
         public static final String ISO_SCALE_UP = "iso_scale_up";

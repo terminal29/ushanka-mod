@@ -1,7 +1,7 @@
 package net.fabricmc.example;
 
 public interface IPlayerEntityExtension {
-    enum CameraDirection{
+    enum CameraDirection {
         NORTH,
         SOUTH,
         EAST,
