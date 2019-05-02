@@ -1,26 +1,17 @@
 package net.fabricmc.example.mixin;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.fabricmc.example.MixinHelpers;
+import net.fabricmc.example.IPlayerEntityExtension;
 import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.*;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.util.math.MathHelper;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.nio.FloatBuffer;
 
 
 @Mixin(GameRenderer.class)
@@ -93,6 +84,8 @@ public abstract class MixinGL{
     private void renderCenter(float float_1, long long_1){// CallbackInfo cbi){
 
         float imageRatio = (float)this.client.window.getFramebufferWidth()/this.client.window.getFramebufferHeight();
+        float isoScale = ((IPlayerEntityExtension)MinecraftClient.getInstance().player).getIsoScale();
+        float isoDistance = ((IPlayerEntityExtension)MinecraftClient.getInstance().player).getIsoDistance();
 
         //cbi.cancel();
         WorldRenderer worldRenderer_1 = this.client.worldRenderer;
@@ -108,7 +101,7 @@ public abstract class MixinGL{
                 //GlStateManager.translatef((float)this.field_3988, (float)(-this.field_4004), 0.0F);
                 //GlStateManager.scaled(this.field_4005, this.field_4005, 1.0D);
             }
-            GlStateManager.ortho(-MixinHelpers.isoScale * imageRatio * 0.5f, MixinHelpers.isoScale * imageRatio * 0.5f, -MixinHelpers.isoScale * 0.5f, MixinHelpers.isoScale * 0.5f, -MixinHelpers.isoDistance * this.viewDistance , MixinHelpers.isoDistance * this.viewDistance);
+            GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -isoDistance * this.viewDistance , isoDistance * this.viewDistance);
         }
         Camera camera_1 = this.camera;
         camera_1.update(this.client.world, (Entity)(this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);

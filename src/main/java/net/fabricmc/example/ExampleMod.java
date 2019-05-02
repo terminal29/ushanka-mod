@@ -50,30 +50,29 @@ public class ExampleMod implements ModInitializer {
 
         ClientTickCallback.EVENT.register(e ->
         {
-            if(isoScaleUp.isPressed()){
-                MixinHelpers.isoScale += 0.2f;
-            }
-            if(isoScaleDown.isPressed()){
-                MixinHelpers.isoScale -= 0.2f;
-            }
 
-            if(isoCameraLeft.wasPressed() && !isoCameraLeft.isPressed()) {
-                IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
-                if (playerEntityExtension != null) {
+            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            if(playerEntityExtension != null){
+
+                if(isoScaleUp.isPressed()){
+                    playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
+                }
+                if(isoScaleDown.isPressed()){
+                    playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
+                }
+
+                if(isoCameraLeft.wasPressed() && !isoCameraLeft.isPressed()) {
                     playerEntityExtension.rotateCameraLeft();
                 }
-            }
-
-            if(isoCameraRight.wasPressed() && !isoCameraRight.isPressed()){
-                IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
-                if(playerEntityExtension != null){
+                if(isoCameraRight.wasPressed() && !isoCameraRight.isPressed()){
                     playerEntityExtension.rotateCameraRight();
+                }
+
+                if(playerEntityExtension.getIsoScale() < 0.01f){
+                    playerEntityExtension.setIsoScale(0.01f);
                 }
             }
 
-            if(MixinHelpers.isoScale < 0.01f){
-                MixinHelpers.isoScale = 0.01f;
-            }
         });
 	}
 }

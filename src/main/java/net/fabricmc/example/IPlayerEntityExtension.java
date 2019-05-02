@@ -15,4 +15,12 @@ public interface IPlayerEntityExtension {
     void rotateCameraLeft();
 
     void rotateCameraRight();
+
+    float getIsoScale();
+
+    void setIsoScale(float isoScale);
+
+    float getIsoDistance();
+
+    void setIsoDistance(float isoDistance);
 }

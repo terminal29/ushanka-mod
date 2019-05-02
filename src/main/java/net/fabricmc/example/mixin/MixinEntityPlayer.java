@@ -18,8 +18,27 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
     private long ticks = 0;
     private CameraDirection direction = CameraDirection.NORTH;
 
+    private float isoScale = 25;
+    private float isoDistance = 1;
+
     protected MixinEntityPlayer(EntityType<? extends LivingEntity> entity, World world) {
         super(entity, world);
+    }
+
+    public float getIsoScale(){
+        return isoScale;
+    }
+
+    public void setIsoScale(float isoScale){
+        this.isoScale = isoScale;
+    }
+
+    public float getIsoDistance(){
+        return isoDistance;
+    }
+
+    public void setIsoDistance(float isoDistance){
+        this.isoDistance = isoDistance;
     }
 
     @Inject(method="tick", at=@At("HEAD"))
