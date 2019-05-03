@@ -1,6 +1,7 @@
 package com.terminal29.ushanka.mixin;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.terminal29.ushanka.ICameraExtension;
 import com.terminal29.ushanka.IGameRenderExtension;
 import com.terminal29.ushanka.IPlayerEntityExtension;
 import net.minecraft.block.BlockRenderLayer;
@@ -119,7 +120,9 @@ public abstract class MixinGL implements IGameRenderExtension {
                 GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -isoDistance * this.viewDistance, isoDistance * this.viewDistance);
             }
             Camera camera_1 = this.camera;
-            camera_1.update(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
+            //camera_1.update(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
+            ((ICameraExtension)camera_1).updateIsometric(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
+
             Frustum frustum_1 = GlMatrixFrustum.get();
             this.client.getProfiler().swap("clear");
             GlStateManager.viewport(0, 0, this.client.window.getFramebufferWidth(), this.client.window.getFramebufferHeight());
@@ -217,10 +220,10 @@ public abstract class MixinGL implements IGameRenderExtension {
             }
 
             this.client.getProfiler().swap("hand");
-            if (this.renderHand) {
+           /* if (this.renderHand) {
                 GlStateManager.clear(256, MinecraftClient.IS_SYSTEM_MAC);
                 this.renderHand(camera_1, float_1);
-            }
+            }*/
         }
     }
 }

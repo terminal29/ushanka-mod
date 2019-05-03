@@ -4,6 +4,7 @@ import com.terminal29.ushanka.IGameRenderExtension;
 import com.terminal29.ushanka.IPlayerEntityExtension;
 import com.terminal29.ushanka.Ushanka;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerEntity.class)
+@Mixin(ClientPlayerEntity.class)
 public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerEntityExtension {
 
     private long ticks = 0;
@@ -89,6 +90,8 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
                 System.out.println(requestedDirection.name() + ":" + currentDirection.name());
             }
         });
+
+
     }
 
     @Override
