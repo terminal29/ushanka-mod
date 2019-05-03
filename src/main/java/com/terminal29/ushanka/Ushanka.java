@@ -3,8 +3,8 @@ package com.terminal29.ushanka;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
@@ -13,6 +13,10 @@ public class Ushanka implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        setupKeybinds();
+    }
+
+    private void setupKeybinds(){
         KeyBindingRegistry.INSTANCE.addCategory(ModInfo.Keybinds.KEYBIND_CATEGORY);
         isoScaleUp = new KeyBinding(
                 FabricKeyBinding.Builder.create(
@@ -68,14 +72,14 @@ public class Ushanka implements ModInitializer {
 
         isoCameraLeft.addOnPressedHandler(keyBinding -> {
             IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
-            if (playerEntityExtension.isCameraIso()) {
+            if (playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
                 playerEntityExtension.rotateCameraLeft();
             }
         });
 
         isoCameraRight.addOnPressedHandler(keyBinding -> {
             IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
-            if (playerEntityExtension.isCameraIso()) {
+            if (playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
                 playerEntityExtension.rotateCameraRight();
             }
         });
@@ -96,5 +100,11 @@ public class Ushanka implements ModInitializer {
                 playerEntityExtension.setIsoScale(0.01f);
             }
         });
+    }
+
+    public static void DrawDebugText(String text, int x, int y, int size) {
+        if (MinecraftClient.getInstance().textRenderer != null && MinecraftClient.getInstance().currentScreen != null) {
+            MinecraftClient.getInstance().currentScreen.drawString(MinecraftClient.getInstance().textRenderer, text, x, y, size);
+        }
     }
 }

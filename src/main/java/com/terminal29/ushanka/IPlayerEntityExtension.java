@@ -5,7 +5,8 @@ public interface IPlayerEntityExtension {
         NORTH,
         SOUTH,
         EAST,
-        WEST
+        WEST,
+        NONE
     }
 
     void setCameraDirection(CameraDirection direction);
@@ -15,6 +16,8 @@ public interface IPlayerEntityExtension {
     void rotateCameraLeft();
 
     void rotateCameraRight();
+
+    boolean isChangingDirection();
 
     float getIsoScale();
 
