@@ -9,7 +9,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
 public class Ushanka implements ModInitializer {
-    private KeyBinding isoScaleUp, isoScaleDown, isoCameraLeft, isoCameraRight;
+    private KeyBinding isoScaleUp, isoScaleDown, isoCameraLeft, isoCameraRight, isoCameraToggle;
 
     @Override
     public void onInitialize() {
@@ -50,11 +50,24 @@ public class Ushanka implements ModInitializer {
                 ).build()
         );
 
+        isoCameraToggle = new KeyBinding(
+                FabricKeyBinding.Builder.create(
+                        new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_CAMERA_TOGGLE),
+                        InputUtil.Type.KEYSYM,
+                        InputUtil.fromName("key.keyboard.o").getKeyCode(),
+                        ModInfo.Keybinds.KEYBIND_CATEGORY
+                ).build()
+        );
+
 
         ClientTickCallback.EVENT.register(e ->
         {
             IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension != null) {
+                if(isoCameraToggle.isPressed() && !isoCameraToggle.wasPressed()){
+                    playerEntityExtension.setCameraIso(!playerEntityExtension.isCameraIso());
+                }
+
                 if (playerEntityExtension.isCameraIso()) {
                     if (isoScaleUp.isPressed()) {
                         playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
