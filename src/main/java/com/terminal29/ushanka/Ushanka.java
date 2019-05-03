@@ -1,4 +1,4 @@
-package net.fabricmc.example;
+package com.terminal29.ushanka;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
@@ -8,11 +8,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
-public class ExampleMod implements ModInitializer {
+public class Ushanka implements ModInitializer {
     private KeyBinding isoScaleUp, isoScaleDown, isoCameraLeft, isoCameraRight;
 
     @Override
     public void onInitialize() {
+        KeyBindingRegistry.INSTANCE.addCategory(ModInfo.Keybinds.KEYBIND_CATEGORY);
         isoScaleUp = new KeyBinding(
                 FabricKeyBinding.Builder.create(
                         new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_SCALE_UP),
@@ -49,30 +50,29 @@ public class ExampleMod implements ModInitializer {
                 ).build()
         );
 
-        KeyBindingRegistry.INSTANCE.addCategory(ModInfo.Keybinds.KEYBIND_CATEGORY);
 
         ClientTickCallback.EVENT.register(e ->
         {
-
             IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension != null) {
+                if (playerEntityExtension.isCameraIso()) {
+                    if (isoScaleUp.isPressed()) {
+                        playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
+                    }
+                    if (isoScaleDown.isPressed()) {
+                        playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
+                    }
 
-                if (isoScaleUp.isPressed()) {
-                    playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
-                }
-                if (isoScaleDown.isPressed()) {
-                    playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
-                }
+                    if (isoCameraLeft.wasPressed() && !isoCameraLeft.isPressed()) {
+                        playerEntityExtension.rotateCameraLeft();
+                    }
+                    if (isoCameraRight.wasPressed() && !isoCameraRight.isPressed()) {
+                        playerEntityExtension.rotateCameraRight();
+                    }
 
-                if (isoCameraLeft.wasPressed() && !isoCameraLeft.isPressed()) {
-                    playerEntityExtension.rotateCameraLeft();
-                }
-                if (isoCameraRight.wasPressed() && !isoCameraRight.isPressed()) {
-                    playerEntityExtension.rotateCameraRight();
-                }
-
-                if (playerEntityExtension.getIsoScale() < 0.01f) {
-                    playerEntityExtension.setIsoScale(0.01f);
+                    if (playerEntityExtension.getIsoScale() < 0.01f) {
+                        playerEntityExtension.setIsoScale(0.01f);
+                    }
                 }
             }
         });

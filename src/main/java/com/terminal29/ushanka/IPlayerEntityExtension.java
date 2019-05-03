@@ -1,4 +1,4 @@
-package net.fabricmc.example;
+package com.terminal29.ushanka;
 
 public interface IPlayerEntityExtension {
     enum CameraDirection {
@@ -23,4 +23,8 @@ public interface IPlayerEntityExtension {
     float getIsoDistance();
 
     void setIsoDistance(float isoDistance);
+
+    boolean isCameraIso();
+
+    void setCameraIso(boolean state);
 }

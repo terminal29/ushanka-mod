@@ -1,4 +1,4 @@
-package net.fabricmc.example;
+package com.terminal29.ushanka;
 
 public class ModInfo {
     public static final String DISPLAY_NAME = "ushanka";

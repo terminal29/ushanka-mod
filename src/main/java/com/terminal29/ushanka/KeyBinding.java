@@ -1,4 +1,4 @@
-package net.fabricmc.example;
+package com.terminal29.ushanka;
 
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
