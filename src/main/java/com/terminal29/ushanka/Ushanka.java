@@ -59,34 +59,41 @@ public class Ushanka implements ModInitializer {
                 ).build()
         );
 
-
-        ClientTickCallback.EVENT.register(e ->
-        {
+        isoCameraToggle.addOnPressedHandler(keyBinding -> {
             IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension != null) {
-                if(isoCameraToggle.isPressed() && !isoCameraToggle.wasPressed()){
-                    playerEntityExtension.setCameraIso(!playerEntityExtension.isCameraIso());
-                }
+                playerEntityExtension.setCameraIso(!playerEntityExtension.isCameraIso());
+            }
+        });
 
-                if (playerEntityExtension.isCameraIso()) {
-                    if (isoScaleUp.isPressed()) {
-                        playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
-                    }
-                    if (isoScaleDown.isPressed()) {
-                        playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
-                    }
+        isoCameraLeft.addOnPressedHandler(keyBinding -> {
+            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            if (playerEntityExtension.isCameraIso()) {
+                playerEntityExtension.rotateCameraLeft();
+            }
+        });
 
-                    if (isoCameraLeft.wasPressed() && !isoCameraLeft.isPressed()) {
-                        playerEntityExtension.rotateCameraLeft();
-                    }
-                    if (isoCameraRight.wasPressed() && !isoCameraRight.isPressed()) {
-                        playerEntityExtension.rotateCameraRight();
-                    }
+        isoCameraRight.addOnPressedHandler(keyBinding -> {
+            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            if (playerEntityExtension.isCameraIso()) {
+                playerEntityExtension.rotateCameraRight();
+            }
+        });
 
-                    if (playerEntityExtension.getIsoScale() < 0.01f) {
-                        playerEntityExtension.setIsoScale(0.01f);
-                    }
-                }
+        isoScaleUp.addOnHeldHandler(keyBinding -> {
+            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            if (playerEntityExtension.isCameraIso()) {
+                playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
+            }
+        });
+
+        isoScaleDown.addOnHeldHandler(keyBinding -> {
+            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            if (playerEntityExtension.isCameraIso()) {
+                playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
+            }
+            if (playerEntityExtension.getIsoScale() < 0.01f) {
+                playerEntityExtension.setIsoScale(0.01f);
             }
         });
     }
