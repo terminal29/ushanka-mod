@@ -87,7 +87,6 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
                         isChangingDirection = false;
                     }
                 }
-                System.out.println(requestedDirection.name() + ":" + currentDirection.name());
             }
         });
 
