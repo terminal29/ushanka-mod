@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.terminal29.ushanka.ICameraExtension;
 import com.terminal29.ushanka.IGameRenderExtension;
 import com.terminal29.ushanka.IPlayerEntityExtension;
+import com.terminal29.ushanka.MathUtilities;
 import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.ParticleManager;
@@ -11,6 +12,9 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -89,7 +94,6 @@ public abstract class MixinGL implements IGameRenderExtension {
     private List<Consumer<MinecraftClient>> onRenderEventHandlers = new ArrayList<>();
 
 
-
     public void addOnRenderEventHandler(Consumer<MinecraftClient> eventHandler) {
         onRenderEventHandlers.add(eventHandler);
     }
@@ -106,6 +110,7 @@ public abstract class MixinGL implements IGameRenderExtension {
             float imageRatio = (float) this.client.window.getFramebufferWidth() / this.client.window.getFramebufferHeight();
             float isoScale = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoScale();
             float isoDistance = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoDistance();
+            float isoSlider = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoSlider();
 
             WorldRenderer worldRenderer_1 = this.client.worldRenderer;
             ParticleManager particleManager_1 = this.client.particleManager;
@@ -114,13 +119,26 @@ public abstract class MixinGL implements IGameRenderExtension {
             this.client.getProfiler().swap("camera");
             {
                 this.viewDistance = (float) (this.client.options.viewDistance * 16);
-                GlStateManager.matrixMode(5889);
+                GlStateManager.matrixMode(GL11.GL_PROJECTION);
+
                 GlStateManager.loadIdentity();
-                if (this.field_4005 != 1.0D) {
-                    GlStateManager.translatef((float) this.field_3988, (float) (-this.field_4004), 0.0F);
-                    GlStateManager.scaled(this.field_4005, this.field_4005, 1.0D);
-                }
                 GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -isoDistance * this.viewDistance, isoDistance * this.viewDistance);
+                FloatBuffer orthoBuffer = BufferUtils.createFloatBuffer(16);
+                GlStateManager.getMatrix(GL11.GL_PROJECTION_MATRIX, orthoBuffer);
+                Matrix4f orthoMatrix = new Matrix4f();
+                orthoMatrix.setFromBuffer(orthoBuffer);
+
+                GlStateManager.loadIdentity();
+                GlStateManager.multMatrix(Matrix4f.method_4929(this.getFov(this.camera, float_1, true), (float)this.client.window.getFramebufferWidth() / (float)this.client.window.getFramebufferHeight(), 0.05F, this.viewDistance * MathHelper.SQUARE_ROOT_OF_TWO));
+                FloatBuffer perspectiveBuffer = BufferUtils.createFloatBuffer(16);
+                GlStateManager.getMatrix(GL11.GL_PROJECTION_MATRIX, perspectiveBuffer);
+                Matrix4f perspectiveMatrix = new Matrix4f();
+                perspectiveMatrix.setFromBuffer(perspectiveBuffer);
+
+                Matrix4f projectionMatrix = MathUtilities.matrixLerp(perspectiveMatrix, orthoMatrix, isoSlider);
+                GlStateManager.loadIdentity();
+                GlStateManager.multMatrix(projectionMatrix);
+
             }
             Camera camera_1 = this.camera;
             //camera_1.update(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);

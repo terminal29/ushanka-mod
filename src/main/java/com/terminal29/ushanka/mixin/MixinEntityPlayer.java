@@ -10,35 +10,92 @@ import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.lwjgl.system.MathUtil;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerEntityExtension {
 
     private long ticks = 0;
 
-    private CameraDirection currentDirection = CameraDirection.NORTH;
+    private CameraDirection currentDirection = CameraDirection.NONE;
     private CameraDirection requestedDirection = CameraDirection.NONE;
     private boolean isChangingDirection = false;
-    private final float YAW_DEADZONE = 0.1f;
 
     private float currentIsoScale = 15;
     private float requestedIsoScale = 15;
     private float isoSlider = 0;
-    private final float ISO_DEADZONE = 0.1f;
 
     private float currentIsoDistance = 1;
     private float requestedIsoDistance = 1;
 
     private boolean isCameraIso = false;
     private boolean requestedCameraIso = false;
+    private boolean isCameraAnimatingIsoChange = false;
 
     protected MixinEntityPlayer(EntityType<? extends LivingEntity> entity, World world) {
         super(entity, world);
+    }
+
+    private float angleForDirection(CameraDirection direction){
+        if(direction == CameraDirection.NORTH)
+            return 0;
+        if(direction == CameraDirection.SOUTH)
+            return 180;
+        if(direction == CameraDirection.EAST)
+            return 90;
+        if(direction == CameraDirection.WEST)
+            return 270;
+        return Float.POSITIVE_INFINITY;
+    }
+
+    private void rotateToDirection(){
+        if (requestedDirection == CameraDirection.NORTH && currentDirection != CameraDirection.NORTH) {
+            isChangingDirection = true;
+            this.yaw = MathUtilities.angleLerp(this.yaw, 0, 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 0)) < YAW_DEADZONE) {
+                this.yaw = 0;
+                currentDirection = CameraDirection.NORTH;
+                isChangingDirection = false;
+            }
+        }
+        if (requestedDirection == CameraDirection.SOUTH && currentDirection != CameraDirection.SOUTH) {
+            isChangingDirection = true;
+            this.yaw = MathUtilities.angleLerp(this.yaw, 180, 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 180)) < YAW_DEADZONE) {
+                this.yaw = 180;
+                currentDirection = CameraDirection.SOUTH;
+                isChangingDirection = false;
+            }
+        }
+        if (requestedDirection == CameraDirection.EAST && currentDirection != CameraDirection.EAST) {
+            isChangingDirection = true;
+            this.yaw = MathUtilities.angleLerp(this.yaw, 90, 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 90)) < YAW_DEADZONE) {
+                this.yaw = 90;
+                currentDirection = CameraDirection.EAST;
+                isChangingDirection = false;
+            }
+        }
+        if (requestedDirection == CameraDirection.WEST && currentDirection != CameraDirection.WEST) {
+            isChangingDirection = true;
+            this.yaw = MathUtilities.angleLerp(this.yaw, 270, 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 270)) < YAW_DEADZONE) {
+                this.yaw = 270;
+                currentDirection = CameraDirection.WEST;
+                isChangingDirection = false;
+            }
+        }
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -47,67 +104,55 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
         gameRenderExtension.addOnRenderEventHandler(e -> {
             if (!world.isClient())
                 return;
-
             if (requestedCameraIso != isCameraIso) {
+                isCameraAnimatingIsoChange = true;
                 if(requestedCameraIso){
-                    isoSlider = MathUtilities.lerp(isoSlider, 1, 0.2f);
-                    if(Math.abs(isoSlider) < ISO_DEADZONE){
+                    isoSlider = MathUtilities.lerp(isoSlider, 1, 0.1f);
+                    this.pitch = MathUtilities.lerp(this.pitch, 0, isoSlider);
+                    if(Math.abs(1 - isoSlider) < ISO_DEADZONE){
                         isoSlider = 1;
                         isCameraIso = true;
                     }
+                    if((requestedDirection == CameraDirection.NONE)){
+                        requestedDirection = getClosestCameraDirection(this.yaw + 90); // not sure why i need this
+                    }
+                    rotateToDirection();
                 }else{
                     isoSlider = MathUtilities.lerp(isoSlider, 0, 0.2f);
                     if(Math.abs(isoSlider) < ISO_DEADZONE){
                         isoSlider = 0;
                         isCameraIso = false;
+                        requestedDirection = CameraDirection.NONE;
+                        currentDirection = CameraDirection.NONE;
                     }
                 }
+            }else{
+                isCameraAnimatingIsoChange = false;
             }
 
             if (isCameraIso) {
                 currentIsoScale = requestedIsoScale;
                 currentIsoDistance = requestedIsoDistance;
-
-                this.pitch = 0;
-
-                if (requestedDirection == CameraDirection.NORTH && currentDirection != CameraDirection.NORTH) {
-                    isChangingDirection = true;
-                    this.yaw = MathUtilities.angleLerp(this.yaw, 0, 0.2f);
-                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 0)) < YAW_DEADZONE) {
-                        this.yaw = 0;
-                        currentDirection = CameraDirection.NORTH;
-                        isChangingDirection = false;
-                    }
-                }
-                if (requestedDirection == CameraDirection.SOUTH && currentDirection != CameraDirection.SOUTH) {
-                    isChangingDirection = true;
-                    this.yaw = MathUtilities.angleLerp(this.yaw, 180, 0.2f);
-                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 180)) < YAW_DEADZONE) {
-                        this.yaw = 180;
-                        currentDirection = CameraDirection.SOUTH;
-                        isChangingDirection = false;
-                    }
-                }
-                if (requestedDirection == CameraDirection.EAST && currentDirection != CameraDirection.EAST) {
-                    isChangingDirection = true;
-                    this.yaw = MathUtilities.angleLerp(this.yaw, 90, 0.2f);
-                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 90)) < YAW_DEADZONE) {
-                        this.yaw = 90;
-                        currentDirection = CameraDirection.EAST;
-                        isChangingDirection = false;
-                    }
-                }
-                if (requestedDirection == CameraDirection.WEST && currentDirection != CameraDirection.WEST) {
-                    isChangingDirection = true;
-                    this.yaw = MathUtilities.angleLerp(this.yaw, 270, 0.2f);
-                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 270)) < YAW_DEADZONE) {
-                        this.yaw = 270;
-                        currentDirection = CameraDirection.WEST;
-                        isChangingDirection = false;
-                    }
-                }
+                rotateToDirection();
             }
         });
+    }
+
+    private CameraDirection getClosestCameraDirection(float angle){
+        float northDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.NORTH));
+        float eastDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.EAST));
+        float westDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.WEST));
+        float southDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.SOUTH));
+
+        List<Pair<Float, CameraDirection>> directions = new ArrayList<>();
+        directions.add(new Pair<>(northDistance, CameraDirection.NORTH));
+        directions.add(new Pair<>(eastDistance, CameraDirection.EAST));
+        directions.add(new Pair<>(westDistance, CameraDirection.WEST));
+        directions.add(new Pair<>(southDistance, CameraDirection.SOUTH));
+
+        directions.sort(Comparator.comparing(Pair::getLeft));
+
+        return directions.get(0).getRight();
     }
 
     @Override
@@ -183,11 +228,12 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
 
     @Override
     public boolean isCameraIso() {
-        return requestedCameraIso;
+        return isCameraIso || isCameraAnimatingIsoChange;
     }
 
     @Override
     public void setCameraIso(boolean state) {
-        requestedCameraIso = state;
+        if(!isCameraAnimatingIsoChange)
+            requestedCameraIso = state;
     }
 }

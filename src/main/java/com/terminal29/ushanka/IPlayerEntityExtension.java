@@ -2,12 +2,16 @@ package com.terminal29.ushanka;
 
 public interface IPlayerEntityExtension {
     enum CameraDirection {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST,
-        NONE
+        NORTH, // 0
+        SOUTH, // 180
+        EAST, // 90
+        WEST, // 270
+        NONE // ~
     }
+
+    final float ISO_DEADZONE = 0.0001f;
+
+    final float YAW_DEADZONE = 0.1f;
 
     void setCameraDirection(CameraDirection direction);
 
@@ -28,8 +32,6 @@ public interface IPlayerEntityExtension {
     void setIsoDistance(float isoDistance);
 
     float getIsoSlider();
-
-    boolean isIso
 
     boolean isCameraIso();
 
