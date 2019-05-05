@@ -5,5 +5,5 @@ import net.minecraft.client.MinecraftClient;
 import java.util.function.Consumer;
 
 public interface IGameRenderExtension {
-    void AddOnRenderEventHandler(Consumer<MinecraftClient> eventHandler);
+    void addOnRenderEventHandler(Consumer<MinecraftClient> eventHandler);
 }

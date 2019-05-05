@@ -2,9 +2,11 @@ package com.terminal29.ushanka.mixin;
 
 import com.terminal29.ushanka.IGameRenderExtension;
 import com.terminal29.ushanka.IPlayerEntityExtension;
+import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.Ushanka;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,12 +22,14 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
     private long ticks = 0;
 
     private CameraDirection currentDirection = CameraDirection.NORTH;
-    private CameraDirection requestedDirection = CameraDirection.NORTH;
+    private CameraDirection requestedDirection = CameraDirection.NONE;
     private boolean isChangingDirection = false;
     private final float YAW_DEADZONE = 0.1f;
 
     private float currentIsoScale = 15;
     private float requestedIsoScale = 15;
+    private float isoSlider = 0;
+    private final float ISO_DEADZONE = 0.1f;
 
     private float currentIsoDistance = 1;
     private float requestedIsoDistance = 1;
@@ -39,11 +43,26 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void init(CallbackInfo cbi) {
-        ((IGameRenderExtension) MinecraftClient.getInstance().gameRenderer).AddOnRenderEventHandler(e -> {
+        IGameRenderExtension gameRenderExtension = (IGameRenderExtension) MinecraftClient.getInstance().gameRenderer;
+        gameRenderExtension.addOnRenderEventHandler(e -> {
             if (!world.isClient())
                 return;
 
-            isCameraIso = requestedCameraIso;
+            if (requestedCameraIso != isCameraIso) {
+                if(requestedCameraIso){
+                    isoSlider = MathUtilities.lerp(isoSlider, 1, 0.2f);
+                    if(Math.abs(isoSlider) < ISO_DEADZONE){
+                        isoSlider = 1;
+                        isCameraIso = true;
+                    }
+                }else{
+                    isoSlider = MathUtilities.lerp(isoSlider, 0, 0.2f);
+                    if(Math.abs(isoSlider) < ISO_DEADZONE){
+                        isoSlider = 0;
+                        isCameraIso = false;
+                    }
+                }
+            }
 
             if (isCameraIso) {
                 currentIsoScale = requestedIsoScale;
@@ -53,8 +72,8 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
 
                 if (requestedDirection == CameraDirection.NORTH && currentDirection != CameraDirection.NORTH) {
                     isChangingDirection = true;
-                    this.yaw = angleLerp(this.yaw, 0, 0.2f);
-                    if (Math.abs(shortAngleDist(this.yaw, 0)) < YAW_DEADZONE) {
+                    this.yaw = MathUtilities.angleLerp(this.yaw, 0, 0.2f);
+                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 0)) < YAW_DEADZONE) {
                         this.yaw = 0;
                         currentDirection = CameraDirection.NORTH;
                         isChangingDirection = false;
@@ -62,8 +81,8 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
                 }
                 if (requestedDirection == CameraDirection.SOUTH && currentDirection != CameraDirection.SOUTH) {
                     isChangingDirection = true;
-                    this.yaw = angleLerp(this.yaw, 180, 0.2f);
-                    if (Math.abs(shortAngleDist(this.yaw, 180)) < YAW_DEADZONE) {
+                    this.yaw = MathUtilities.angleLerp(this.yaw, 180, 0.2f);
+                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 180)) < YAW_DEADZONE) {
                         this.yaw = 180;
                         currentDirection = CameraDirection.SOUTH;
                         isChangingDirection = false;
@@ -71,8 +90,8 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
                 }
                 if (requestedDirection == CameraDirection.EAST && currentDirection != CameraDirection.EAST) {
                     isChangingDirection = true;
-                    this.yaw = angleLerp(this.yaw, 90, 0.2f);
-                    if (Math.abs(shortAngleDist(this.yaw, 90)) < YAW_DEADZONE) {
+                    this.yaw = MathUtilities.angleLerp(this.yaw, 90, 0.2f);
+                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 90)) < YAW_DEADZONE) {
                         this.yaw = 90;
                         currentDirection = CameraDirection.EAST;
                         isChangingDirection = false;
@@ -80,8 +99,8 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
                 }
                 if (requestedDirection == CameraDirection.WEST && currentDirection != CameraDirection.WEST) {
                     isChangingDirection = true;
-                    this.yaw = angleLerp(this.yaw, 270, 0.2f);
-                    if (Math.abs(shortAngleDist(this.yaw, 270)) < YAW_DEADZONE) {
+                    this.yaw = MathUtilities.angleLerp(this.yaw, 270, 0.2f);
+                    if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 270)) < YAW_DEADZONE) {
                         this.yaw = 270;
                         currentDirection = CameraDirection.WEST;
                         isChangingDirection = false;
@@ -89,8 +108,6 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
                 }
             }
         });
-
-
     }
 
     @Override
@@ -109,6 +126,9 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
     }
 
     @Override
+    public float getIsoSlider(){ return this.isoSlider; }
+
+    @Override
     public void setIsoDistance(float requestedIsoDistance) {
         this.requestedIsoDistance = requestedIsoDistance;
     }
@@ -116,17 +136,6 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
     @Override
     public boolean isChangingDirection() {
         return isChangingDirection;
-    }
-
-    // https://gist.github.com/shaunlebron/8832585
-    float shortAngleDist(float a0, float a1) {
-        float max = (float) 360;
-        float da = (a1 - a0) % max;
-        return 2 * da % max - da;
-    }
-
-    float angleLerp(float a0, float a1, float t) {
-        return a0 + shortAngleDist(a0, a1) * t;
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -174,7 +183,7 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
 
     @Override
     public boolean isCameraIso() {
-        return isCameraIso;
+        return requestedCameraIso;
     }
 
     @Override

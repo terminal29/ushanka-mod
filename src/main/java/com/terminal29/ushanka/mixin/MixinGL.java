@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.*;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -87,7 +88,9 @@ public abstract class MixinGL implements IGameRenderExtension {
 
     private List<Consumer<MinecraftClient>> onRenderEventHandlers = new ArrayList<>();
 
-    public void AddOnRenderEventHandler(Consumer<MinecraftClient> eventHandler) {
+
+
+    public void addOnRenderEventHandler(Consumer<MinecraftClient> eventHandler) {
         onRenderEventHandlers.add(eventHandler);
     }
 

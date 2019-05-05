@@ -27,6 +27,10 @@ public interface IPlayerEntityExtension {
 
     void setIsoDistance(float isoDistance);
 
+    float getIsoSlider();
+
+    boolean isIso
+
     boolean isCameraIso();
 
     void setCameraIso(boolean state);
