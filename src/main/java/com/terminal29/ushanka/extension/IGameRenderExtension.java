@@ -1,4 +1,4 @@
-package com.terminal29.ushanka;
+package com.terminal29.ushanka.extension;
 
 import net.minecraft.client.MinecraftClient;
 

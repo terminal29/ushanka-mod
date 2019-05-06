@@ -3,10 +3,10 @@
   "package": "com.terminal29.ushanka.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinEntityPlayer"
+    "MixinClientPlayerEntity",
+    "MixinServerPlayerEntity"
   ],
   "client": [
-    "ExampleMixin",
     "MixinGL",
     "MixinCamera",
     "MixinMouse"

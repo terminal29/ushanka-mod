@@ -1,6 +1,6 @@
 package com.terminal29.ushanka.mixin;
 
-import com.terminal29.ushanka.IPlayerEntityExtension;
+import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;

@@ -1,12 +1,16 @@
 package com.terminal29.ushanka;
 
+import com.terminal29.ushanka.dimension.DimensionTypeVillage;
+import com.terminal29.ushanka.dimension.DimensionVillage;
+import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionType;
 
 public class Ushanka implements ModInitializer {
     private KeyBinding isoScaleUp, isoScaleDown, isoCameraLeft, isoCameraRight, isoCameraToggle;
@@ -14,6 +18,11 @@ public class Ushanka implements ModInitializer {
     @Override
     public void onInitialize() {
         setupKeybinds();
+        setupWorld();
+    }
+
+    private void setupWorld(){
+        DimensionVillage.initStatic();
     }
 
     private void setupKeybinds(){

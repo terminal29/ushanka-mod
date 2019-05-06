@@ -2,6 +2,7 @@ package com.terminal29.ushanka;
 
 public class ModInfo {
     public static final String DISPLAY_NAME = "ushanka";
+    public static final String DIMENSION_NAME = "village";
 
     public class Keybinds {
         public static final String KEYBIND_CATEGORY = "controls." + ModInfo.DISPLAY_NAME;

@@ -1,19 +1,22 @@
 package com.terminal29.ushanka.mixin;
 
-import com.terminal29.ushanka.IGameRenderExtension;
-import com.terminal29.ushanka.IPlayerEntityExtension;
+import com.mojang.authlib.GameProfile;
+import com.terminal29.ushanka.dimension.DimensionVillage;
+import com.terminal29.ushanka.extension.IGameRenderExtension;
+import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import com.terminal29.ushanka.MathUtilities;
-import com.terminal29.ushanka.Ushanka;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.math.Matrix4f;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import org.lwjgl.system.MathUtil;
+import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +27,11 @@ import java.util.Comparator;
 import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerEntityExtension {
+public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity implements IPlayerEntityExtension {
+
+    @Shadow
+    @Final
+    ClientPlayNetworkHandler networkHandler;
 
     private long ticks = 0;
 
@@ -43,8 +50,8 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
     private boolean requestedCameraIso = false;
     private boolean isCameraAnimatingIsoChange = false;
 
-    protected MixinEntityPlayer(EntityType<? extends LivingEntity> entity, World world) {
-        super(entity, world);
+    public MixinClientPlayerEntity(ClientWorld clientWorld_1, GameProfile gameProfile_1) {
+        super(clientWorld_1, gameProfile_1);
     }
 
     private float angleForDirection(CameraDirection direction){
@@ -181,11 +188,6 @@ public abstract class MixinEntityPlayer extends LivingEntity implements IPlayerE
     @Override
     public boolean isChangingDirection() {
         return isChangingDirection;
-    }
-
-    @Inject(method = "tick", at = @At("HEAD"))
-    protected void onTick(CallbackInfo info) {
-        ticks++;
     }
 
     @Override

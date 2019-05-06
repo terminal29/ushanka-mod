@@ -1,9 +1,9 @@
 package com.terminal29.ushanka.mixin;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.terminal29.ushanka.ICameraExtension;
-import com.terminal29.ushanka.IGameRenderExtension;
-import com.terminal29.ushanka.IPlayerEntityExtension;
+import com.terminal29.ushanka.extension.ICameraExtension;
+import com.terminal29.ushanka.extension.IGameRenderExtension;
+import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import com.terminal29.ushanka.MathUtilities;
 import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.client.MinecraftClient;
