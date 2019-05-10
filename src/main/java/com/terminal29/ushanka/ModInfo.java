@@ -12,4 +12,8 @@ public class ModInfo {
         public static final String ISO_CAMERA_RIGHT = "iso_camera_right";
         public static final String ISO_CAMERA_TOGGLE = "iso_camera_toggle";
     }
+
+    public class Items {
+        public static final String USHANKA = "ushanka";
+    }
 }

@@ -172,7 +172,7 @@ public abstract class MixinGL implements IGameRenderExtension {
             GlStateManager.disableAlphaTest();
             worldRenderer_1.renderLayer(BlockRenderLayer.SOLID, camera_1);
             GlStateManager.enableAlphaTest();
-            worldRenderer_1.renderLayer(BlockRenderLayer.MIPPED_CUTOUT, camera_1);
+            worldRenderer_1.renderLayer(BlockRenderLayer.CUTOUT_MIPPED, camera_1);
             this.client.getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX).pushFilter(false, false);
             worldRenderer_1.renderLayer(BlockRenderLayer.CUTOUT, camera_1);
             this.client.getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX).popFilter();
