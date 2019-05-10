@@ -10,11 +10,18 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.*;
@@ -23,15 +30,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@Mixin(ClientPlayerEntity.class)
-public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity implements IPlayerEntityExtension {
-
-    @Shadow
-    @Final
-    ClientPlayNetworkHandler networkHandler;
+@Mixin(PlayerEntity.class)
+public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerEntityExtension {
 
     private long ticks = 0;
 
@@ -50,8 +54,67 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
     private boolean requestedCameraIso = false;
     private boolean isCameraAnimatingIsoChange = false;
 
-    public MixinClientPlayerEntity(ClientWorld clientWorld_1, GameProfile gameProfile_1) {
-        super(clientWorld_1, gameProfile_1);
+    protected MixinPlayerEntity(EntityType<? extends LivingEntity> entityType_1, World world_1) {
+        super(entityType_1, world_1);
+    }
+
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    protected void onTick(CallbackInfo info) {
+        ticks++;
+
+        if(ticks == 100 && this.dimension != null && this.dimension != DimensionVillage.VILLAGE) {
+            System.out.println("Here we go");
+            changeToVillageDimension();
+        }
+
+    }
+
+
+    // With help from https://github.com/StellarHorizons/Galacticraft-Rewoven/blob/master/src/main/java/com/hrznstudio/galacticraft/GalacticraftCommands.java
+    private void changeToVillageDimension() {
+        ServerWorld world = this.getServer().getWorld(DimensionVillage.VILLAGE);
+        Entity $this = this;
+        BlockPos spawnPos = world.getSpawnPos();
+        double x = spawnPos.getX();
+        double y = spawnPos.getY();
+        double z = spawnPos.getZ();
+
+        if ($this instanceof ServerPlayerEntity) {
+            ServerPlayerEntity player = (ServerPlayerEntity) $this;
+            player.stopRiding();
+            if (player.isSleeping()) {
+                player.wakeUp(true, true, false);
+            }
+
+            if (world == $this.world) {
+                player.networkHandler.teleportRequest(x, y, z, 0, 0, Collections.emptySet());
+            } else {
+                player.teleport(world, x, y, z, 0, 0);
+            }
+        } else {
+            if (world == $this.world) {
+                $this.setPosition(x, y, z);
+            } else {
+                $this.detach();
+                $this.dimension = world.dimension.getType();
+                Entity entity_2 = $this;
+                $this = $this.getType().create(world);
+                if ($this == null) {
+                    return;
+                }
+
+                $this.method_5878(entity_2);
+                $this.setPosition(x, y, z);
+                world.method_18769($this);
+                entity_2.removed = true;
+            }
+        }
+
+        if (!($this instanceof LivingEntity) || !((LivingEntity) $this).isFallFlying()) {
+            $this.setVelocity($this.getVelocity().multiply(1.0D, 0.0D, 1.0D));
+            $this.onGround = true;
+        }
     }
 
     private float angleForDirection(CameraDirection direction){

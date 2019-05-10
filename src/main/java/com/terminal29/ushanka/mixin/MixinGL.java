@@ -142,7 +142,7 @@ public abstract class MixinGL implements IGameRenderExtension {
             }
             Camera camera_1 = this.camera;
             //camera_1.update(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
-            ((ICameraExtension)camera_1).updateIsometric(this.client.world, (Entity) (this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
+            ((ICameraExtension)camera_1).updateIsometric(this.client.world, this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity(), this.client.options.perspective > 0, this.client.options.perspective == 2, float_1);
 
             Frustum frustum_1 = GlMatrixFrustum.get();
             this.client.getProfiler().swap("clear");

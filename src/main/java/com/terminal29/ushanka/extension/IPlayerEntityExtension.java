@@ -9,9 +9,9 @@ public interface IPlayerEntityExtension {
         NONE // ~
     }
 
-    final float ISO_DEADZONE = 0.0001f;
+    float ISO_DEADZONE = 0.0001f;
 
-    final float YAW_DEADZONE = 0.1f;
+    float YAW_DEADZONE = 0.1f;
 
     void setCameraDirection(CameraDirection direction);
 
