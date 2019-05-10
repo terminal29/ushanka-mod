@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "ushanka",
   "version": "${version}",
 
   "name": "Ushanka",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Adds a cool hat. Inspired by the game Fez.",
   "authors": [
     "Me!"
   ],
@@ -14,7 +14,7 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/ushanka/icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -23,7 +23,7 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "ushanka.mixins.json"
   ],
 
   "requires": {
