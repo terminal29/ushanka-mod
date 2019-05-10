@@ -22,16 +22,13 @@ import net.minecraft.world.level.LevelGeneratorType;
 
 public class DimensionVillage extends Dimension {
 
-    public static final DimensionType VILLAGE = Registry.register(Registry.DIMENSION, 249, ModInfo.DISPLAY_NAME + ":" + ModInfo.DIMENSION_NAME, new DimensionTypeVillage(249, ModInfo.DISPLAY_NAME + ":" + ModInfo.DIMENSION_NAME, ModInfo.DIMENSION_NAME, DimensionVillage::new, true));
 
 
     public DimensionVillage(World world_1, DimensionType dimensionType_1) {
         super(world_1, dimensionType_1);
     }
 
-    public static void initStatic() {
-        //VILLAGE = Registry.register(Registry.DIMENSION, 249, ModInfo.DISPLAY_NAME + ":" + ModInfo.DIMENSION_NAME, new DimensionTypeVillage(249, ModInfo.DISPLAY_NAME + ":" + ModInfo.DIMENSION_NAME, ModInfo.DIMENSION_NAME, DimensionVillage::new, true));
-    }
+
 
     @Override
     public ChunkGenerator<?> createChunkGenerator() {
@@ -79,6 +76,6 @@ public class DimensionVillage extends Dimension {
 
     @Override
     public DimensionType getType() {
-        return VILLAGE;
+        return UshankaDimensions.VILLAGE;
     }
 }

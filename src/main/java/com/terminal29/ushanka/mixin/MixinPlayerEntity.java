@@ -2,6 +2,7 @@ package com.terminal29.ushanka.mixin;
 
 import com.mojang.authlib.GameProfile;
 import com.terminal29.ushanka.dimension.DimensionVillage;
+import com.terminal29.ushanka.dimension.UshankaDimensions;
 import com.terminal29.ushanka.extension.IGameRenderExtension;
 import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import com.terminal29.ushanka.MathUtilities;
@@ -63,7 +64,7 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
     protected void onTick(CallbackInfo info) {
         ticks++;
 
-        if(ticks == 100 && this.dimension != null && this.dimension != DimensionVillage.VILLAGE) {
+        if(ticks == 100 && this.dimension != null && this.dimension != UshankaDimensions.VILLAGE) {
             System.out.println("Here we go");
             changeToVillageDimension();
         }
@@ -73,7 +74,7 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
 
     // With help from https://github.com/StellarHorizons/Galacticraft-Rewoven/blob/master/src/main/java/com/hrznstudio/galacticraft/GalacticraftCommands.java
     private void changeToVillageDimension() {
-        ServerWorld world = this.getServer().getWorld(DimensionVillage.VILLAGE);
+        ServerWorld world = this.getServer().getWorld(UshankaDimensions.VILLAGE);
         Entity $this = this;
         BlockPos spawnPos = world.getSpawnPos();
         double x = spawnPos.getX();

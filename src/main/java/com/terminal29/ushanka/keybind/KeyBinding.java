@@ -1,10 +1,8 @@
-package com.terminal29.ushanka;
+package com.terminal29.ushanka.keybind;
 
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
-import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-import net.minecraft.client.MinecraftClient;
 
 import java.util.ArrayList;
 import java.util.List;
