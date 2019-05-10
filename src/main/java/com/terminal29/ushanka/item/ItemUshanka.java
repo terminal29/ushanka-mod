@@ -41,7 +41,7 @@ public class ItemUshanka extends ArmorItem {
 
             @Override
             public String getName() {
-                return null;
+                return "ushanka";
             }
 
             @Override
