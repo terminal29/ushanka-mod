@@ -11,44 +11,7 @@ import net.minecraft.sound.SoundEvent;
 
 public class ItemUshanka extends ArmorItem {
     public ItemUshanka(Settings item$Settings_1) {
-        super(new ArmorMaterial() {
-
-
-            @Override
-            public int getDurability(EquipmentSlot equipmentSlot) {
-                return 0;
-            }
-
-            @Override
-            public int getProtectionAmount(EquipmentSlot equipmentSlot) {
-                return 0;
-            }
-
-            @Override
-            public int getEnchantability() {
-                return 0;
-            }
-
-            @Override
-            public SoundEvent getEquipSound() {
-                return null;
-            }
-
-            @Override
-            public Ingredient getRepairIngredient() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return "ushanka";
-            }
-
-            @Override
-            public float getToughness() {
-                return 0;
-            }
-        }, EquipmentSlot.HEAD, item$Settings_1);
+        super(new MaterialUshanka(), EquipmentSlot.HEAD, item$Settings_1);
     }
 
 }

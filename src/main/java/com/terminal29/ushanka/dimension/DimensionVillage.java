@@ -61,7 +61,7 @@ public class DimensionVillage extends Dimension {
 
     @Override
     public Vec3d getFogColor(float v, float v1) {
-        return new Vec3d(0, 0, 1);
+        return new Vec3d(94/255.0,157/255.0,52/255.0);
     }
 
     @Override
@@ -77,5 +77,9 @@ public class DimensionVillage extends Dimension {
     @Override
     public DimensionType getType() {
         return UshankaDimensions.VILLAGE;
+    }
+
+    public Vec3d getSkyColor(){
+        return new Vec3d(94/255.0,157/255.0,52/255.0);
     }
 }
