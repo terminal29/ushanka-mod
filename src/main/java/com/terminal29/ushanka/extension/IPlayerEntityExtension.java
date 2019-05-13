@@ -36,4 +36,8 @@ public interface IPlayerEntityExtension {
     boolean isCameraIso();
 
     void setCameraIso(boolean state);
+
+    void teleportToVillage();
+
+    void teleportToPreviousWorld();
 }

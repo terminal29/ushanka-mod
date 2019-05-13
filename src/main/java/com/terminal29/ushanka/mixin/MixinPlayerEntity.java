@@ -1,31 +1,30 @@
 package com.terminal29.ushanka.mixin;
 
-import com.mojang.authlib.GameProfile;
-import com.terminal29.ushanka.dimension.DimensionVillage;
+import com.terminal29.ushanka.MathUtilities;
+import com.terminal29.ushanka.ModInfo;
 import com.terminal29.ushanka.dimension.UshankaDimensions;
 import com.terminal29.ushanka.extension.IGameRenderExtension;
 import com.terminal29.ushanka.extension.IPlayerEntityExtension;
-import com.terminal29.ushanka.MathUtilities;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,42 +38,63 @@ import java.util.List;
 public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerEntityExtension {
 
     private long ticks = 0;
-
     private CameraDirection currentDirection = CameraDirection.NONE;
     private CameraDirection requestedDirection = CameraDirection.NONE;
     private boolean isChangingDirection = false;
-
     private float currentIsoScale = 15;
     private float requestedIsoScale = 15;
     private float isoSlider = 0;
-
     private float currentIsoDistance = 1;
     private float requestedIsoDistance = 1;
-
     private boolean isCameraIso = false;
     private boolean requestedCameraIso = false;
     private boolean isCameraAnimatingIsoChange = false;
+    private DimensionType previousDimension = null;
+    private boolean shouldGoToVillage = false;
 
     protected MixinPlayerEntity(EntityType<? extends LivingEntity> entityType_1, World world_1) {
         super(entityType_1, world_1);
     }
 
-
     @Inject(method = "tick", at = @At("RETURN"))
     protected void onTick(CallbackInfo info) {
         ticks++;
-
-        if(ticks == 100 && this.dimension != null && this.dimension != UshankaDimensions.VILLAGE) {
-            System.out.println("Here we go");
-            changeToVillageDimension();
+        if (this.world.isClient()) {
+            // We are client side
+            if (shouldGoToVillage && this.dimension != UshankaDimensions.VILLAGE) {
+                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                buf.writeBoolean(true);
+                buf.writeUuid(this.getUuid());
+                ((ClientPlayerEntity)(Object)this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.CHANGE_DIMENSION), buf));
+                System.out.println("yes");
+            }
+            if (!shouldGoToVillage && this.dimension == UshankaDimensions.VILLAGE) {
+                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                buf.writeBoolean(false);
+                buf.writeUuid(this.getUuid());
+                ((ClientPlayerEntity)(Object)this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.CHANGE_DIMENSION), buf));
+                System.out.println("no");
+            }
         }
-
     }
 
+    @Override
+    public void teleportToVillage() {
+        changeToDimension(UshankaDimensions.VILLAGE);
+    }
+
+    @Override
+    public void teleportToPreviousWorld() {
+        changeToDimension(this.previousDimension);
+    }
 
     // With help from https://github.com/StellarHorizons/Galacticraft-Rewoven/blob/master/src/main/java/com/hrznstudio/galacticraft/GalacticraftCommands.java
-    private void changeToVillageDimension() {
-        ServerWorld world = this.getServer().getWorld(UshankaDimensions.VILLAGE);
+    private void changeToDimension(DimensionType type) {
+        if (this.dimension == null || this.dimension == type)
+            return;
+
+        this.previousDimension = this.dimension;
+        ServerWorld world = this.getServer().getWorld(type);
         Entity $this = this;
         BlockPos spawnPos = world.getSpawnPos();
         double x = spawnPos.getX();
@@ -118,19 +138,19 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
         }
     }
 
-    private float angleForDirection(CameraDirection direction){
-        if(direction == CameraDirection.NORTH)
+    private float angleForDirection(CameraDirection direction) {
+        if (direction == CameraDirection.NORTH)
             return 0;
-        if(direction == CameraDirection.SOUTH)
+        if (direction == CameraDirection.SOUTH)
             return 180;
-        if(direction == CameraDirection.EAST)
+        if (direction == CameraDirection.EAST)
             return 90;
-        if(direction == CameraDirection.WEST)
+        if (direction == CameraDirection.WEST)
             return 270;
         return Float.POSITIVE_INFINITY;
     }
 
-    private void rotateToDirection(){
+    private void rotateToDirection() {
         if (requestedDirection == CameraDirection.NORTH && currentDirection != CameraDirection.NORTH) {
             isChangingDirection = true;
             this.yaw = MathUtilities.angleLerp(this.yaw, 0, 0.2f);
@@ -177,27 +197,29 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
                 return;
             if (requestedCameraIso != isCameraIso) {
                 isCameraAnimatingIsoChange = true;
-                if(requestedCameraIso){
+                if (requestedCameraIso) {
                     isoSlider = MathUtilities.lerp(isoSlider, 1, 0.1f);
                     this.pitch = MathUtilities.lerp(this.pitch, 0, isoSlider);
-                    if(Math.abs(1 - isoSlider) < ISO_DEADZONE){
+                    if (Math.abs(1 - isoSlider) < ISO_DEADZONE) {
                         isoSlider = 1;
                         isCameraIso = true;
+                        shouldGoToVillage = true;
                     }
-                    if((requestedDirection == CameraDirection.NONE)){
+                    if ((requestedDirection == CameraDirection.NONE)) {
                         requestedDirection = getClosestCameraDirection(this.yaw + 90); // not sure why i need this
                     }
                     rotateToDirection();
-                }else{
+                } else {
                     isoSlider = MathUtilities.lerp(isoSlider, 0, 0.2f);
-                    if(Math.abs(isoSlider) < ISO_DEADZONE){
+                    if (Math.abs(isoSlider) < ISO_DEADZONE) {
                         isoSlider = 0;
                         isCameraIso = false;
                         requestedDirection = CameraDirection.NONE;
                         currentDirection = CameraDirection.NONE;
+                        shouldGoToVillage = false;
                     }
                 }
-            }else{
+            } else {
                 isCameraAnimatingIsoChange = false;
             }
 
@@ -209,7 +231,7 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
         });
     }
 
-    private CameraDirection getClosestCameraDirection(float angle){
+    private CameraDirection getClosestCameraDirection(float angle) {
         float northDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.NORTH));
         float eastDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.EAST));
         float westDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.WEST));
@@ -242,11 +264,13 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
     }
 
     @Override
-    public float getIsoSlider(){ return this.isoSlider; }
-
-    @Override
     public void setIsoDistance(float requestedIsoDistance) {
         this.requestedIsoDistance = requestedIsoDistance;
+    }
+
+    @Override
+    public float getIsoSlider() {
+        return this.isoSlider;
     }
 
     @Override
@@ -255,13 +279,13 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
     }
 
     @Override
-    public void setCameraDirection(CameraDirection direction) {
-        this.requestedDirection = direction;
+    public CameraDirection getCameraDirection() {
+        return currentDirection;
     }
 
     @Override
-    public CameraDirection getCameraDirection() {
-        return currentDirection;
+    public void setCameraDirection(CameraDirection direction) {
+        this.requestedDirection = direction;
     }
 
     @Override
@@ -299,7 +323,7 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
 
     @Override
     public void setCameraIso(boolean state) {
-        if(!isCameraAnimatingIsoChange)
+        if (!isCameraAnimatingIsoChange)
             requestedCameraIso = state;
     }
 }

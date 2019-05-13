@@ -16,4 +16,8 @@ public class ModInfo {
     public class Items {
         public static final String USHANKA = "ushanka";
     }
+
+    public class Packets {
+        public static final String CHANGE_DIMENSION = "change_dimension";
+    }
 }
