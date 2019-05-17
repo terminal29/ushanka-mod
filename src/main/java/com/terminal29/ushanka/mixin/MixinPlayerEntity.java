@@ -2,19 +2,19 @@ package com.terminal29.ushanka.mixin;
 
 import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.ModInfo;
+import com.terminal29.ushanka.UshankaPersistentData;
 import com.terminal29.ushanka.dimension.UshankaDimensions;
 import com.terminal29.ushanka.extension.IGameRenderExtension;
 import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.server.world.ServerWorld;
@@ -49,11 +49,61 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
     private boolean isCameraIso = false;
     private boolean requestedCameraIso = false;
     private boolean isCameraAnimatingIsoChange = false;
-    private DimensionType previousDimension = null;
-    private boolean shouldGoToVillage = false;
 
     protected MixinPlayerEntity(EntityType<? extends LivingEntity> entityType_1, World world_1) {
         super(entityType_1, world_1);
+    }
+
+    // Need to send packet to server to set this data, getServer is inaccessible from client side...
+    // Need to send packet back to client on loading? maybe? not sure?
+
+    private UshankaPersistentData getPersistentData(){
+        return MinecraftClient.getInstance().getServer().getWorld(this.dimension).getPersistentStateManager().get(UshankaPersistentData::new, ModInfo.DISPLAY_NAME);
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void init(CallbackInfo cbi) {
+        isCameraIso = getPersistentData().isPlayerIso(this.uuid);
+        System.out.println(world.isClient() + ":" + getPersistentData().isPlayerIso(this.uuid));
+
+        IGameRenderExtension gameRenderExtension = (IGameRenderExtension) MinecraftClient.getInstance().gameRenderer;
+        gameRenderExtension.addOnRenderEventHandler(e -> {
+            if (!world.isClient())
+                return;
+            if (requestedCameraIso != isCameraIso) {
+                isCameraAnimatingIsoChange = true;
+                if (requestedCameraIso) {
+                    isoSlider = MathUtilities.lerp(isoSlider, 1, 0.1f);
+                    this.pitch = MathUtilities.lerp(this.pitch, 0, isoSlider);
+                    if (Math.abs(1 - isoSlider) < ISO_DEADZONE) {
+                        isoSlider = 1;
+                        isCameraIso = true;
+                        getPersistentData().setPlayerIso(this.uuid, isCameraIso);
+                    }
+                    if ((requestedDirection == CameraDirection.NONE)) {
+                        requestedDirection = getClosestCameraDirection(this.yaw + 90); // not sure why i need this
+                    }
+                    rotateToDirection();
+                } else {
+                    isoSlider = MathUtilities.lerp(isoSlider, 0, 0.2f);
+                    if (Math.abs(isoSlider) < ISO_DEADZONE) {
+                        isoSlider = 0;
+                        isCameraIso = false;
+                        getPersistentData().setPlayerIso(this.uuid, isCameraIso);
+                        requestedDirection = CameraDirection.NONE;
+                        currentDirection = CameraDirection.NONE;
+                    }
+                }
+            } else {
+                isCameraAnimatingIsoChange = false;
+            }
+
+            if (isCameraIso) {
+                currentIsoScale = requestedIsoScale;
+                currentIsoDistance = requestedIsoDistance;
+                rotateToDirection();
+            }
+        });
     }
 
     @Inject(method = "tick", at = @At("RETURN"))
@@ -61,19 +111,17 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
         ticks++;
         if (this.world.isClient()) {
             // We are client side
-            if (shouldGoToVillage && this.dimension != UshankaDimensions.VILLAGE) {
+            if (isCameraIso && this.dimension != UshankaDimensions.VILLAGE) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 buf.writeBoolean(true);
                 buf.writeUuid(this.getUuid());
-                ((ClientPlayerEntity)(Object)this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.CHANGE_DIMENSION), buf));
-                System.out.println("yes");
+                ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.CHANGE_DIMENSION), buf));
             }
-            if (!shouldGoToVillage && this.dimension == UshankaDimensions.VILLAGE) {
+            if (!isCameraIso && this.dimension == UshankaDimensions.VILLAGE) {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 buf.writeBoolean(false);
                 buf.writeUuid(this.getUuid());
-                ((ClientPlayerEntity)(Object)this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.CHANGE_DIMENSION), buf));
-                System.out.println("no");
+                ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.CHANGE_DIMENSION), buf));
             }
         }
     }
@@ -84,16 +132,17 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
     }
 
     @Override
-    public void teleportToPreviousWorld() {
-        changeToDimension(this.previousDimension);
+    public void teleportToOverworld() {
+        changeToDimension(DimensionType.OVERWORLD);
     }
 
     // With help from https://github.com/StellarHorizons/Galacticraft-Rewoven/blob/master/src/main/java/com/hrznstudio/galacticraft/GalacticraftCommands.java
     private void changeToDimension(DimensionType type) {
-        if (this.dimension == null || this.dimension == type)
+        if (this.dimension == null || this.dimension == type) {
+            System.out.println("Dimension to: " + this.dimension);
             return;
+        }
 
-        this.previousDimension = this.dimension;
         ServerWorld world = this.getServer().getWorld(type);
         Entity $this = this;
         BlockPos spawnPos = world.getSpawnPos();
@@ -187,48 +236,6 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
                 isChangingDirection = false;
             }
         }
-    }
-
-    @Inject(method = "<init>", at = @At("RETURN"))
-    public void init(CallbackInfo cbi) {
-        IGameRenderExtension gameRenderExtension = (IGameRenderExtension) MinecraftClient.getInstance().gameRenderer;
-        gameRenderExtension.addOnRenderEventHandler(e -> {
-            if (!world.isClient())
-                return;
-            if (requestedCameraIso != isCameraIso) {
-                isCameraAnimatingIsoChange = true;
-                if (requestedCameraIso) {
-                    isoSlider = MathUtilities.lerp(isoSlider, 1, 0.1f);
-                    this.pitch = MathUtilities.lerp(this.pitch, 0, isoSlider);
-                    if (Math.abs(1 - isoSlider) < ISO_DEADZONE) {
-                        isoSlider = 1;
-                        isCameraIso = true;
-                        shouldGoToVillage = true;
-                    }
-                    if ((requestedDirection == CameraDirection.NONE)) {
-                        requestedDirection = getClosestCameraDirection(this.yaw + 90); // not sure why i need this
-                    }
-                    rotateToDirection();
-                } else {
-                    isoSlider = MathUtilities.lerp(isoSlider, 0, 0.2f);
-                    if (Math.abs(isoSlider) < ISO_DEADZONE) {
-                        isoSlider = 0;
-                        isCameraIso = false;
-                        requestedDirection = CameraDirection.NONE;
-                        currentDirection = CameraDirection.NONE;
-                        shouldGoToVillage = false;
-                    }
-                }
-            } else {
-                isCameraAnimatingIsoChange = false;
-            }
-
-            if (isCameraIso) {
-                currentIsoScale = requestedIsoScale;
-                currentIsoDistance = requestedIsoDistance;
-                rotateToDirection();
-            }
-        });
     }
 
     private CameraDirection getClosestCameraDirection(float angle) {

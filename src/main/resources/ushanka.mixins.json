@@ -3,7 +3,8 @@
   "package": "com.terminal29.ushanka.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinPlayerEntity"
+    "MixinPlayerEntity",
+    "MixinServerWorld"
   ],
   "client": [
     "MixinGL",

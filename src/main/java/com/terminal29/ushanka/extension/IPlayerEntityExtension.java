@@ -39,5 +39,5 @@ public interface IPlayerEntityExtension {
 
     void teleportToVillage();
 
-    void teleportToPreviousWorld();
+    void teleportToOverworld();
 }
