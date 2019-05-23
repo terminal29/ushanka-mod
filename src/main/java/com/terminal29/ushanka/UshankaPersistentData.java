@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.dimension.DimensionType;
+
 import java.util.UUID;
 
 public class UshankaPersistentData extends PersistentState {
@@ -28,15 +30,12 @@ public class UshankaPersistentData extends PersistentState {
     }
 
     public static UshankaPersistentData get(MinecraftServer server){
-        return server.getWorld(UshankaDimensions.VILLAGE).getPersistentStateManager().getOrCreate(UshankaPersistentData::new, ModInfo.DISPLAY_NAME);
+        return server.getWorld(DimensionType.OVERWORLD).getPersistentStateManager().getOrCreate(UshankaPersistentData::new, ModInfo.DISPLAY_NAME);
     }
 
     @Override
     public void fromTag(CompoundTag tag) {
         ushankaPlayerStorage = new CompoundTag();
-        System.out.println("@fromTag");
-        System.out.println(tag);
-
         for(String playerUUID : tag.getKeys()){
             ushankaPlayerStorage.put(playerUUID, tag.getCompound(playerUUID));
         }
@@ -44,11 +43,8 @@ public class UshankaPersistentData extends PersistentState {
 
     @Override
     public CompoundTag toTag(CompoundTag tag) {
-        System.out.println("@toTag");
-        System.out.println(tag);
-
         for(String playerUUID : ushankaPlayerStorage.getKeys()){
-            ushankaPlayerStorage.put(playerUUID, tag.getCompound(playerUUID));
+            tag.put(playerUUID, ushankaPlayerStorage.getCompound(playerUUID));
         }
         return tag;
     }
@@ -60,11 +56,13 @@ public class UshankaPersistentData extends PersistentState {
             tag.putString(ModInfo.Packets.ISO_DIRECTION, IClientPlayerEntityExtension.CameraDirection.NONE.name());
             ushankaPlayerStorage.put(playerUUID.toString(), tag);
         }
+        markDirty();
     }
 
     public void setPlayerIsoState(UUID playerUUID, boolean state){
         setPlayerTag(playerUUID);
         ushankaPlayerStorage.getCompound(playerUUID.toString()).putBoolean(ModInfo.Packets.ISO_STATE, state);
+        markDirty();
     }
 
     public boolean getPlayerIsoState(UUID playerUUID){
@@ -75,6 +73,7 @@ public class UshankaPersistentData extends PersistentState {
     public void setPlayerIsoDirection(UUID playerUUID, IClientPlayerEntityExtension.CameraDirection direction){
         setPlayerTag(playerUUID);
         ushankaPlayerStorage.getCompound(playerUUID.toString()).putString(ModInfo.Packets.ISO_DIRECTION, direction.name());
+        markDirty();
     }
 
     public IClientPlayerEntityExtension.CameraDirection getPlayerIsoDirection(UUID playerUUID){

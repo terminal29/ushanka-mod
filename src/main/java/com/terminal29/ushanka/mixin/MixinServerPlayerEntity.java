@@ -76,6 +76,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
             updateClientIsoState(state);
 
         isCameraIso = state;
+        UshankaPersistentData.get(getServer()).setPlayerIsoState(this.uuid, this.isCameraIso);
         if(state && world.dimension.getType() != UshankaDimensions.VILLAGE) {
             onDimensionChanged(UshankaDimensions.VILLAGE);
         }
@@ -85,6 +86,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         if(updateRemote)
             updateClientIsoDirection(direction);
         cameraDirection = direction;
+        UshankaPersistentData.get(getServer()).setPlayerIsoDirection(this.uuid, this.cameraDirection);
     }
 
     public void onDimensionChanged(DimensionType type){
@@ -104,21 +106,5 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
     @Override
     public CameraDirection getCameraDirection(){
         return this.cameraDirection;
-    }
-
-    @Override
-    public CompoundTag serialize(){
-        CompoundTag tag = new CompoundTag();
-     //   tag.putBoolean("iso_state", isCameraIso);
-     //   tag.putString("iso_direction", cameraDirection.name());
-        return tag;
-    }
-
-    @Override
-    public void deserialize(CompoundTag tag){
-    //  isCameraIso = tag.containsKey("iso_state") ? tag.getBoolean("iso_state") : false;
-    //  cameraDirection = tag.containsKey("iso_direction") ? CameraDirection.fromName(tag.getString("iso_state")) : CameraDirection.NONE;
-
-
     }
 }
