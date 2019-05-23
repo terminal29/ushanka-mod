@@ -1,7 +1,7 @@
 package com.terminal29.ushanka.keybind;
 
 import com.terminal29.ushanka.ModInfo;
-import com.terminal29.ushanka.extension.IPlayerEntityExtension;
+import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -59,35 +59,35 @@ public class UshankaKeybinds {
         );
 
         isoCameraToggle.addOnPressedHandler(keyBinding -> {
-            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension != null) {
-                playerEntityExtension.setCameraIso(!playerEntityExtension.isCameraIso());
+                playerEntityExtension.requestCameraIso(!playerEntityExtension.isCameraIso());
             }
         });
 
         isoCameraLeft.addOnPressedHandler(keyBinding -> {
-            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
                 playerEntityExtension.rotateCameraLeft();
             }
         });
 
         isoCameraRight.addOnPressedHandler(keyBinding -> {
-            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
                 playerEntityExtension.rotateCameraRight();
             }
         });
 
         isoScaleUp.addOnHeldHandler(keyBinding -> {
-            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension.isCameraIso()) {
                 playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
             }
         });
 
         isoScaleDown.addOnHeldHandler(keyBinding -> {
-            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension) MinecraftClient.getInstance().player;
+            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension.isCameraIso()) {
                 playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
             }

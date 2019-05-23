@@ -3,7 +3,7 @@ package com.terminal29.ushanka.mixin;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.terminal29.ushanka.extension.ICameraExtension;
 import com.terminal29.ushanka.extension.IGameRenderExtension;
-import com.terminal29.ushanka.extension.IPlayerEntityExtension;
+import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import com.terminal29.ushanka.MathUtilities;
 import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.client.MinecraftClient;
@@ -11,7 +11,6 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.*;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.Matrix4f;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -103,14 +102,14 @@ public abstract class MixinGL implements IGameRenderExtension {
         for (Consumer<MinecraftClient> handler : onRenderEventHandlers) {
             handler.accept(MinecraftClient.getInstance());
         }
-        boolean isCameraIso = ((IPlayerEntityExtension)MinecraftClient.getInstance().player).isCameraIso();
+        boolean isCameraIso = ((IClientPlayerEntityExtension)MinecraftClient.getInstance().player).isCameraIso();
         if(isCameraIso) {
             cbi.cancel();
 
             float imageRatio = (float) this.client.window.getFramebufferWidth() / this.client.window.getFramebufferHeight();
-            float isoScale = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoScale();
-            float isoDistance = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoDistance();
-            float isoSlider = ((IPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoSlider();
+            float isoScale = ((IClientPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoScale();
+            float isoDistance = 1;
+            float isoSlider = ((IClientPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoSlider();
 
             WorldRenderer worldRenderer_1 = this.client.worldRenderer;
             ParticleManager particleManager_1 = this.client.particleManager;

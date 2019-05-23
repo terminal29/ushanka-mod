@@ -1,43 +1,12 @@
 package com.terminal29.ushanka.extension;
 
+import net.minecraft.world.dimension.DimensionType;
+
 public interface IPlayerEntityExtension {
-    enum CameraDirection {
-        NORTH, // 0
-        SOUTH, // 180
-        EAST, // 90
-        WEST, // 270
-        NONE // ~
-    }
 
-    float ISO_DEADZONE = 0.0001f;
+    void changeToDimension(DimensionType type);
 
-    float YAW_DEADZONE = 0.1f;
+    void onCameraIsoChanged(boolean state, boolean updateRemote);
 
-    void setCameraDirection(CameraDirection direction);
-
-    CameraDirection getCameraDirection();
-
-    void rotateCameraLeft();
-
-    void rotateCameraRight();
-
-    boolean isChangingDirection();
-
-    float getIsoScale();
-
-    void setIsoScale(float isoScale);
-
-    float getIsoDistance();
-
-    void setIsoDistance(float isoDistance);
-
-    float getIsoSlider();
-
-    boolean isCameraIso();
-
-    void setCameraIso(boolean state);
-
-    void teleportToVillage();
-
-    void teleportToOverworld();
+    void onCameraDirectionChanged(IClientPlayerEntityExtension.CameraDirection direction, boolean updateRemote);
 }

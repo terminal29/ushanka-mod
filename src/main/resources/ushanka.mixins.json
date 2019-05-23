@@ -4,9 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinPlayerEntity",
-    "MixinServerWorld"
+    "MixinServerPlayerEntity",
+    "MixinEntity"
   ],
   "client": [
+    "MixinClientPlayerEntity",
     "MixinGL",
     "MixinCamera",
     "MixinMouse",

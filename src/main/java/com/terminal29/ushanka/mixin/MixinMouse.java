@@ -1,6 +1,6 @@
 package com.terminal29.ushanka.mixin;
 
-import com.terminal29.ushanka.extension.IPlayerEntityExtension;
+import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -14,7 +14,7 @@ public class MixinMouse {
 @Redirect(method="updateMouse", at=@At(value="INVOKE", target="Lnet/minecraft/client/network/ClientPlayerEntity;changeLookDirection(DD)V"))
     public void redirect_updateMouse_changeLookDirection(ClientPlayerEntity clientPlayerEntity, double x, double y){
         if(MinecraftClient.getInstance().player != null) {
-            IPlayerEntityExtension playerEntityExtension = (IPlayerEntityExtension)MinecraftClient.getInstance().player;
+            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension)MinecraftClient.getInstance().player;
             if(playerEntityExtension.isCameraIso()) {
                 return; // no movement
             }

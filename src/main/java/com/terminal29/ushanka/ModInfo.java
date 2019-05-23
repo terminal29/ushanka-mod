@@ -1,8 +1,14 @@
 package com.terminal29.ushanka;
 
+import net.minecraft.util.Identifier;
+
 public class ModInfo {
     public static final String DISPLAY_NAME = "ushanka";
     public static final String DIMENSION_NAME = "village";
+
+    public static Identifier identifierFor(String object){
+        return new Identifier(ModInfo.DISPLAY_NAME, object);
+    }
 
     public class Keybinds {
         public static final String KEYBIND_CATEGORY = "controls." + ModInfo.DISPLAY_NAME;
@@ -19,5 +25,8 @@ public class ModInfo {
 
     public class Packets {
         public static final String CHANGE_DIMENSION = "change_dimension";
+        public static final String ISO_STATE = "iso_state";
+        public static final String ISO_DIRECTION = "iso_direction";
+        public static final String CLIENT_READY = "client_ready";
     }
 }
