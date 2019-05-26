@@ -138,49 +138,49 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
     private float angleForDirection(CameraDirection direction) {
         if (direction == CameraDirection.NORTH)
-            return 0;
-        if (direction == CameraDirection.SOUTH)
             return 180;
+        if (direction == CameraDirection.SOUTH)
+            return 0;
         if (direction == CameraDirection.EAST)
-            return 90;
-        if (direction == CameraDirection.WEST)
             return 270;
+        if (direction == CameraDirection.WEST)
+            return 90;
         return Float.POSITIVE_INFINITY;
     }
 
     private void rotateToDirection() {
         if (requestedDirection == CameraDirection.NORTH && currentDirection != CameraDirection.NORTH) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, 0, 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 0)) < YAW_DEADZONE) {
-                this.yaw = 0;
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.NORTH), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.NORTH))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(CameraDirection.NORTH);
                 this.onCameraDirectionChanged(CameraDirection.NORTH, true);
                 isChangingDirection = false;
             }
         }
         if (requestedDirection == CameraDirection.SOUTH && currentDirection != CameraDirection.SOUTH) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, 180, 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 180)) < YAW_DEADZONE) {
-                this.yaw = 180;
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.SOUTH), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.SOUTH))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(CameraDirection.SOUTH);
                 this.onCameraDirectionChanged(CameraDirection.SOUTH, true);
                 isChangingDirection = false;
             }
         }
         if (requestedDirection == CameraDirection.EAST && currentDirection != CameraDirection.EAST) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, 90, 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 90)) < YAW_DEADZONE) {
-                this.yaw = 90;
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.EAST), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.EAST))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(CameraDirection.EAST);
                 this.onCameraDirectionChanged(CameraDirection.EAST, true);
                 isChangingDirection = false;
             }
         }
         if (requestedDirection == CameraDirection.WEST && currentDirection != CameraDirection.WEST) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, 270, 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, 270)) < YAW_DEADZONE) {
-                this.yaw = 270;
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.WEST), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.WEST))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(CameraDirection.WEST);
                 this.onCameraDirectionChanged(CameraDirection.WEST, true);
                 isChangingDirection = false;
             }

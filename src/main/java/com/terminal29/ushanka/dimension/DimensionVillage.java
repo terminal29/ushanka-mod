@@ -22,6 +22,7 @@ import net.minecraft.world.level.LevelGeneratorType;
 
 public class DimensionVillage extends Dimension {
 
+    public static final int ISLAND_CHUNK_SIZE = 4;
 
 
     public DimensionVillage(World world_1, DimensionType dimensionType_1) {

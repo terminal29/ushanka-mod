@@ -4,10 +4,10 @@ import net.minecraft.nbt.CompoundTag;
 
 public interface IClientPlayerEntityExtension {
     enum CameraDirection {
-        NORTH, // 0
-        SOUTH, // 180
-        EAST, // 90
-        WEST, // 270
+        NORTH, // 180
+        SOUTH, // 0
+        EAST, // 270
+        WEST, // 90
         NONE; // ~
 
         public static CameraDirection fromName(String name){

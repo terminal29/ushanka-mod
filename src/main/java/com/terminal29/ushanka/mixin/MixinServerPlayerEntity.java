@@ -107,4 +107,11 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
     public CameraDirection getCameraDirection(){
         return this.cameraDirection;
     }
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    protected void onTick(CallbackInfo info) {
+
+
+    }
+
 }
