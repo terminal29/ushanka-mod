@@ -62,7 +62,7 @@ public class DimensionVillage extends Dimension {
 
     @Override
     public Vec3d getFogColor(float v, float v1) {
-        return new Vec3d(94/255.0,157/255.0,52/255.0);
+        return new Vec3d(135/255.0,206/255.0,235/255.0);
     }
 
     @Override
