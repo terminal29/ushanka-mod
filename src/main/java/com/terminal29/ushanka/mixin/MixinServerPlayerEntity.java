@@ -16,6 +16,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
+import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -38,6 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
@@ -154,7 +156,8 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
                             System.out.println("Found Space to move to " + currentBlockPos + " : " + feetBlock);
                             BlockPos newPosition = feetBlock.up();
                            // this.setPosition(newPosition.getX(), newPosition.getY(), newPosition.getZ());
-                            this.move(MovementType.PLAYER, this.getPos().subtract(newPosition.getX(), newPosition.getY(), newPosition.getZ()));
+                            //this.move(MovementType.PLAYER, this.getPos().subtract(newPosition.getX(), newPosition.getY(), newPosition.getZ()));
+                            asSPEntity().networkHandler.teleportRequest(this.x, this.y, newPosition.getZ(), this.yaw, this.pitch, EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag.class));
                         }
                     }
                 }
