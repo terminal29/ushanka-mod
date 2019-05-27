@@ -4,7 +4,10 @@ import net.minecraft.util.Identifier;
 
 public class ModInfo {
     public static final String DISPLAY_NAME = "ushanka";
-    public static final String DIMENSION_NAME = "village";
+    public class Dimensions {
+        public static final String DIMENSION_NAME = "village";
+        public static final String BIOME = "village";
+    }
 
     public static Identifier identifierFor(String object){
         return new Identifier(ModInfo.DISPLAY_NAME, object);

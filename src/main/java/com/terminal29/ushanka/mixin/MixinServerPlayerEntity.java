@@ -60,6 +60,10 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         UshankaPersistentData persistentData = UshankaPersistentData.get(getServer());
         updateClientIsoState(persistentData.getPlayerIsoState(this.uuid));
         updateClientIsoDirection(persistentData.getPlayerIsoDirection(this.uuid));
+        this.onCameraIsoChanged(persistentData.getPlayerIsoState(this.uuid), false);
+        this.onCameraDirectionChanged(persistentData.getPlayerIsoDirection(this.uuid), false);
+
+
     }
 
     private void updateClientIsoState(boolean state) {
@@ -113,15 +117,15 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         return this.cameraDirection;
     }
 
-    @Inject(method = "tick", at = @At("RETURN"))
+    @Inject(method = "tick", at = @At("HEAD"))
     protected void onTick(CallbackInfo info) {
-        //if(isCameraIso()) {
-        if (!this.getBlockPos().isWithinDistance(previousBlockPos, 1)) {
-            System.out.println(this.getBlockPos());
-            previousBlockPos = this.getBlockPos();
-            MoveToVisibleBlock();
+        if(isCameraIso()) {
+            if (!this.getBlockPos().isWithinDistance(previousBlockPos, 1)) {
+                System.out.println(this.getBlockPos());
+                previousBlockPos = this.getBlockPos();
+                MoveToVisibleBlock();
+            }
         }
-        //}
     }
 
     // Moves a player to a block if it looks like the player could stand on it from their viewpoint

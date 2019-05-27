@@ -1,30 +1,15 @@
 package com.terminal29.ushanka.dimension;
 
-import com.mojang.datafixers.Dynamic;
-import com.terminal29.ushanka.ModInfo;
-import net.minecraft.block.BlockState;
-import net.minecraft.datafixers.NbtOps;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.*;
-import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.*;
-import net.minecraft.world.level.LevelGeneratorType;
 
 public class DimensionVillage extends Dimension {
-
-    public static final int ISLAND_CHUNK_SIZE = 4;
-
-
     public DimensionVillage(World world_1, DimensionType dimensionType_1) {
         super(world_1, dimensionType_1);
     }
@@ -33,11 +18,9 @@ public class DimensionVillage extends Dimension {
 
     @Override
     public ChunkGenerator<?> createChunkGenerator() {
-        ChunkGeneratorType<FlatChunkGeneratorConfig, FlatChunkGenerator> chunkGeneratorType_1 = ChunkGeneratorType.FLAT;
-        BiomeSourceType<FixedBiomeSourceConfig, FixedBiomeSource> biomeSourceType_1 = BiomeSourceType.FIXED;
-        FlatChunkGeneratorConfig flatChunkGeneratorConfig_1 = FlatChunkGeneratorConfig.getDefaultConfig();
-        FixedBiomeSourceConfig fixedBiomeSourceConfig_1 = (biomeSourceType_1.getConfig()).setBiome(flatChunkGeneratorConfig_1.getBiome());
-        return chunkGeneratorType_1.create(this.world, biomeSourceType_1.applyConfig(fixedBiomeSourceConfig_1), flatChunkGeneratorConfig_1);
+        FixedBiomeSourceConfig cfg = new FixedBiomeSourceConfig();
+        cfg.setBiome(UshankaDimensions.VILLAGE_BIOME);
+        return new VillageChunkGenerator(this.world, new FixedBiomeSource(cfg), new VillageChunkGeneratorConfig());
     }
 
     @Override
