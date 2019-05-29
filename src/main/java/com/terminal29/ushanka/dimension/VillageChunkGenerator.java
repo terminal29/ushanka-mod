@@ -15,7 +15,6 @@ public class VillageChunkGenerator extends ChunkGenerator<VillageChunkGeneratorC
 
     @Override
     public void buildSurface(Chunk chunk) {
-
     }
 
     @Override
