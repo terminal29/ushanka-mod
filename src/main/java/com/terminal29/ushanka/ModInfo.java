@@ -2,11 +2,13 @@ package com.terminal29.ushanka;
 
 import net.minecraft.util.Identifier;
 
+
 public class ModInfo {
     public static final String DISPLAY_NAME = "ushanka";
     public class Dimensions {
         public static final String DIMENSION_NAME = "village";
         public static final String BIOME = "village";
+        public static final String SURFACE_BUILDER = "village_surface_builder";
     }
 
     public static Identifier identifierFor(String object){

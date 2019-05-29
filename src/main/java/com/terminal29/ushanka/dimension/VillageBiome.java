@@ -6,7 +6,7 @@ import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 public class VillageBiome extends Biome {
     public static VillageBiome Build(){
         Biome.Settings settings = new Biome.Settings()
-            .configureSurfaceBuilder(new VillageSurfaceBuilder())
+            .configureSurfaceBuilder(SurfaceBuilder.NOPE, SurfaceBuilder.AIR_CONFIG)
             .precipitation(Precipitation.RAIN)
             .category(Category.NONE)
             .depth(0.1F)
