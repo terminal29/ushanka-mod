@@ -32,4 +32,11 @@ public class MathUtilities {
         mat.setFromBuffer(FloatBuffer.wrap(matElements));
         return mat;
     }
+
+    // https://stackoverflow.com/questions/90238/whats-the-syntax-for-mod-in-java
+    public static int mod(int x, int y)
+    {
+        int result = x % y;
+        return result < 0? result + y : result;
+    }
 }

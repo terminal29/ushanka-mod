@@ -11,35 +11,20 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 public class VillageChunkGenerator extends ChunkGenerator<VillageChunkGeneratorConfig> {
 
-
     public static final int ISLAND_MAX_CHUNK_WIDTH = 4;
     public static final int ISLAND_CHUNK_SPACING = 8;
 
     public VillageChunkGenerator(IWorld iWorld_1, BiomeSource biomeSource_1, VillageChunkGeneratorConfig chunkGeneratorConfig_1) {
         super(iWorld_1, biomeSource_1, chunkGeneratorConfig_1);
+        VillageIslandManager.INSTANCE.setWorld(iWorld_1);
     }
 
     @Override
     public void buildSurface(Chunk chunk) {
-        boolean doGenerateInChunk = shouldGenerateInChunk(chunk.getPos());
+        boolean doGenerateInChunk = VillageIslandManager.INSTANCE.isIslandChunk(chunk.getPos());
         if(doGenerateInChunk){
-            for(int x = 0; x < 16; x++){
-                for(int z = 0; z < 16; z++){
-                    chunk.setBlockState(new BlockPos(x,0,z), Blocks.COAL_BLOCK.getDefaultState(), false);
-                }
-            }
+            VillageIslandManager.INSTANCE.chunkToIsland(chunk.getPos()).buildInChunk(chunk);
         }
-    }
-
-    private static int mod(int x, int y)
-    {
-        int result = x % y;
-        return result < 0? result + y : result;
-    }
-
-    private static boolean shouldGenerateInChunk(ChunkPos pos){
-        return (mod(pos.x,(ISLAND_MAX_CHUNK_WIDTH + ISLAND_CHUNK_SPACING)) < ISLAND_MAX_CHUNK_WIDTH)
-                && (mod(pos.z,(ISLAND_MAX_CHUNK_WIDTH + ISLAND_CHUNK_SPACING)) < ISLAND_MAX_CHUNK_WIDTH);
     }
 
     @Override
