@@ -39,6 +39,10 @@ public interface IClientPlayerEntityExtension {
 
     void setIsoScale(float isoScale);
 
+    float getIsoDistance();
+
+    void setIsoDistance(float isoDistance);
+
     float getIsoSlider();
 
     boolean isCameraIso();

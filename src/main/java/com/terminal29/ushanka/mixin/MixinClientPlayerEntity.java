@@ -38,8 +38,8 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
     private float currentIsoScale = 15;
     private float requestedIsoScale = 15;
     private float isoSlider = 0;
-    private float currentIsoDistance = 1;
-    private float requestedIsoDistance = 1;
+    private float currentIsoDistance = 0.4f;
+    private float requestedIsoDistance = 0.4f;
     private boolean isCameraIso = false;
     private boolean requestedCameraIso = false;
     private boolean isCameraAnimatingIsoChange = false;
@@ -283,4 +283,14 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         this.onCameraIsoChanged(state, true);
     }
 
+    @Override
+    public float getIsoDistance() {
+        System.out.println(currentIsoDistance);
+        return currentIsoDistance;
+    }
+
+    @Override
+    public void setIsoDistance(float isoDistance){
+        this.requestedIsoDistance = isoDistance;
+    }
 }

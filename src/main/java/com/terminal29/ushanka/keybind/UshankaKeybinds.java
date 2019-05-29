@@ -82,17 +82,14 @@ public class UshankaKeybinds {
         isoScaleUp.addOnHeldHandler(keyBinding -> {
             IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension.isCameraIso()) {
-                playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() + 0.2f);
+                playerEntityExtension.setIsoDistance(playerEntityExtension.getIsoDistance() + 0.2f);
             }
         });
 
         isoScaleDown.addOnHeldHandler(keyBinding -> {
             IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension.isCameraIso()) {
-                playerEntityExtension.setIsoScale(playerEntityExtension.getIsoScale() - 0.2f);
-            }
-            if (playerEntityExtension.getIsoScale() < 0.01f) {
-                playerEntityExtension.setIsoScale(0.01f);
+                playerEntityExtension.setIsoDistance(playerEntityExtension.getIsoDistance() - 0.2f);
             }
         });
     }
