@@ -30,7 +30,7 @@ public class VillageChunkGenerator extends ChunkGenerator<VillageChunkGeneratorC
             }
         }
     }
-    
+
     private static int mod(int x, int y)
     {
         int result = x % y;
