@@ -1,13 +1,12 @@
 package com.terminal29.ushanka.dimension;
 
-import com.sun.istack.internal.Nullable;
 import com.terminal29.ushanka.MathUtilities;
+import com.terminal29.ushanka.ModInfo;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class VillageIslandManager {
@@ -41,7 +40,7 @@ public class VillageIslandManager {
                 (int)Math.floor(pos.z / (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH + VillageIslandManager.ISLAND_CHUNK_SPACING))
         );
         if(!islands.containsKey(islandKey)){
-            islands.put(islandKey, new VillageIsland(pos));
+            islands.put(islandKey, new VillageIsland(0, pos));
         }
         return islands.get(islandKey);
     }

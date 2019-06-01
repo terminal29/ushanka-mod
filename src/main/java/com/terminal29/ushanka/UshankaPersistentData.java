@@ -52,8 +52,8 @@ public class UshankaPersistentData extends PersistentState {
     private void setPlayerTag(UUID playerUUID){
         if(!ushankaPlayerStorage.getKeys().contains(playerUUID.toString())){
             CompoundTag tag = new CompoundTag();
-            tag.putBoolean(ModInfo.Packets.ISO_STATE, false);
-            tag.putString(ModInfo.Packets.ISO_DIRECTION, IClientPlayerEntityExtension.CameraDirection.NONE.name());
+            tag.putBoolean(ModInfo.PACKET_ISO_STATE, false);
+            tag.putString(ModInfo.PACKET_ISO_DIRECTION, IClientPlayerEntityExtension.CameraDirection.NONE.name());
             ushankaPlayerStorage.put(playerUUID.toString(), tag);
         }
         markDirty();
@@ -61,24 +61,24 @@ public class UshankaPersistentData extends PersistentState {
 
     public void setPlayerIsoState(UUID playerUUID, boolean state){
         setPlayerTag(playerUUID);
-        ushankaPlayerStorage.getCompound(playerUUID.toString()).putBoolean(ModInfo.Packets.ISO_STATE, state);
+        ushankaPlayerStorage.getCompound(playerUUID.toString()).putBoolean(ModInfo.PACKET_ISO_STATE, state);
         markDirty();
     }
 
     public boolean getPlayerIsoState(UUID playerUUID){
         setPlayerTag(playerUUID);
-        return ushankaPlayerStorage.getCompound(playerUUID.toString()).getBoolean(ModInfo.Packets.ISO_STATE);
+        return ushankaPlayerStorage.getCompound(playerUUID.toString()).getBoolean(ModInfo.PACKET_ISO_STATE);
     }
 
     public void setPlayerIsoDirection(UUID playerUUID, IClientPlayerEntityExtension.CameraDirection direction){
         setPlayerTag(playerUUID);
-        ushankaPlayerStorage.getCompound(playerUUID.toString()).putString(ModInfo.Packets.ISO_DIRECTION, direction.name());
+        ushankaPlayerStorage.getCompound(playerUUID.toString()).putString(ModInfo.PACKET_ISO_DIRECTION, direction.name());
         markDirty();
     }
 
     public IClientPlayerEntityExtension.CameraDirection getPlayerIsoDirection(UUID playerUUID){
         setPlayerTag(playerUUID);
-        return IClientPlayerEntityExtension.CameraDirection.fromName(ushankaPlayerStorage.getCompound(playerUUID.toString()).getString(ModInfo.Packets.ISO_DIRECTION));
+        return IClientPlayerEntityExtension.CameraDirection.fromName(ushankaPlayerStorage.getCompound(playerUUID.toString()).getString(ModInfo.PACKET_ISO_DIRECTION));
     }
 
 

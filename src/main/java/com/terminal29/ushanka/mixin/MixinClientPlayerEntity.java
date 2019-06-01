@@ -65,26 +65,26 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
     }
 
     private void updateServerIsoState(boolean state){
-        System.out.println(ModInfo.Packets.ISO_STATE + " " + state);
+        System.out.println(ModInfo.PACKET_ISO_STATE + " " + state);
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeBoolean(state);
         buf.writeUuid(this.getUuid());
-        ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Packets.ISO_STATE), buf));
+        ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.PACKET_ISO_STATE), buf));
     }
 
     private void updateServerIsoDirection(CameraDirection direction){
-        System.out.println(ModInfo.Packets.ISO_DIRECTION + " " + direction.name());
+        System.out.println(ModInfo.PACKET_ISO_DIRECTION + " " + direction.name());
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeString(direction.name());
         buf.writeUuid(this.getUuid());
-        ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(ModInfo.identifierFor(ModInfo.Packets.ISO_DIRECTION), buf));
+        ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(ModInfo.identifierFor(ModInfo.PACKET_ISO_DIRECTION), buf));
     }
 
     private void tellServerClientIsReady(){
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeBoolean(true);
         buf.writeUuid(this.getUuid());
-        ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(ModInfo.identifierFor(ModInfo.Packets.CLIENT_READY), buf));
+        ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(ModInfo.identifierFor(ModInfo.PACKET_CLIENT_READY), buf));
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))

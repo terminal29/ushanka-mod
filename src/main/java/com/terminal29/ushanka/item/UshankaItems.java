@@ -10,13 +10,13 @@ import net.minecraft.util.registry.Registry;
 
 public class UshankaItems {
     public static ItemGroup CREATIVE_TAB = FabricItemGroupBuilder.create(
-            new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Items.USHANKA))
+            new Identifier(ModInfo.DISPLAY_NAME, ModInfo.ITEM_USHANKA))
             .icon(() -> new ItemStack(new ItemUshanka(new Item.Settings())))
             .build();
 
     private static final Item USHANKA = new ItemUshanka(new Item.Settings().itemGroup(CREATIVE_TAB).stackSize(1));
 
     public static void init(){
-        Registry.register(Registry.ITEM, new Identifier(ModInfo.DISPLAY_NAME, ModInfo.Items.USHANKA), USHANKA);
+        Registry.register(Registry.ITEM, new Identifier(ModInfo.DISPLAY_NAME, ModInfo.ITEM_USHANKA), USHANKA);
     }
 }

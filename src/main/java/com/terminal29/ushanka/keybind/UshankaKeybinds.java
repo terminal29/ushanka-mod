@@ -12,49 +12,49 @@ public class UshankaKeybinds {
     private static KeyBinding isoScaleUp, isoScaleDown, isoCameraLeft, isoCameraRight, isoCameraToggle;
 
     public static void init() {
-        KeyBindingRegistry.INSTANCE.addCategory(ModInfo.Keybinds.KEYBIND_CATEGORY);
+        KeyBindingRegistry.INSTANCE.addCategory(ModInfo.KEYBIND_CATEGORY.toString());
         isoScaleUp = new KeyBinding(
                 FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_SCALE_UP),
+                        new Identifier(ModInfo.KEYBIND_CATEGORY.toString(), ModInfo.KEYBIND_ISO_SCALE_UP.toString()),
                         InputUtil.Type.KEYSYM,
                         InputUtil.fromName("key.keyboard.i").getKeyCode(),
-                        ModInfo.Keybinds.KEYBIND_CATEGORY
+                        ModInfo.KEYBIND_CATEGORY.toString()
                 ).build()
         );
 
         isoScaleDown = new KeyBinding(
                 FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_SCALE_DOWN),
+                        new Identifier(ModInfo.KEYBIND_CATEGORY.toString(), ModInfo.KEYBIND_ISO_SCALE_DOWN.toString()),
                         InputUtil.Type.KEYSYM,
                         InputUtil.fromName("key.keyboard.k").getKeyCode(),
-                        ModInfo.Keybinds.KEYBIND_CATEGORY
+                        ModInfo.KEYBIND_CATEGORY.toString()
                 ).build()
         );
 
         isoCameraLeft = new KeyBinding(
                 FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_CAMERA_LEFT),
+                        new Identifier(ModInfo.KEYBIND_CATEGORY.toString(), ModInfo.KEYBIND_ISO_CAMERA_LEFT.toString()),
                         InputUtil.Type.KEYSYM,
                         InputUtil.fromName("key.keyboard.j").getKeyCode(),
-                        ModInfo.Keybinds.KEYBIND_CATEGORY
+                        ModInfo.KEYBIND_CATEGORY.toString()
                 ).build()
         );
 
         isoCameraRight = new KeyBinding(
                 FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_CAMERA_RIGHT),
+                        new Identifier(ModInfo.KEYBIND_CATEGORY.toString(), ModInfo.KEYBIND_ISO_CAMERA_RIGHT.toString()),
                         InputUtil.Type.KEYSYM,
                         InputUtil.fromName("key.keyboard.l").getKeyCode(),
-                        ModInfo.Keybinds.KEYBIND_CATEGORY
+                        ModInfo.KEYBIND_CATEGORY.toString()
                 ).build()
         );
 
         isoCameraToggle = new KeyBinding(
                 FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.Keybinds.KEYBIND_CATEGORY, ModInfo.Keybinds.ISO_CAMERA_TOGGLE),
+                        new Identifier(ModInfo.KEYBIND_CATEGORY.toString(), ModInfo.KEYBIND_ISO_CAMERA_TOGGLE.toString()),
                         InputUtil.Type.KEYSYM,
                         InputUtil.fromName("key.keyboard.o").getKeyCode(),
-                        ModInfo.Keybinds.KEYBIND_CATEGORY
+                        ModInfo.KEYBIND_CATEGORY.toString()
                 ).build()
         );
 

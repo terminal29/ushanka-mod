@@ -1,6 +1,7 @@
 package com.terminal29.ushanka.mixin;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.terminal29.ushanka.dimension.VillageIslandManager;
 import com.terminal29.ushanka.extension.ICameraExtension;
 import com.terminal29.ushanka.extension.IGameRenderExtension;
 import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
@@ -121,7 +122,8 @@ public abstract class MixinGL implements IGameRenderExtension {
                 GlStateManager.matrixMode(GL11.GL_PROJECTION);
 
                 GlStateManager.loadIdentity();
-                GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -isoDistance * this.viewDistance, isoDistance * this.viewDistance);
+                GlStateManager.ortho(-isoScale * imageRatio * 0.5f, isoScale * imageRatio * 0.5f, -isoScale * 0.5f, isoScale * 0.5f, -(VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH * 16 * 2 - 10), (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH * 16 * 2 - 10));
+
                 FloatBuffer orthoBuffer = BufferUtils.createFloatBuffer(16);
                 GlStateManager.getMatrix(GL11.GL_PROJECTION_MATRIX, orthoBuffer);
                 Matrix4f orthoMatrix = new Matrix4f();

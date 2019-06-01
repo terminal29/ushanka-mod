@@ -70,14 +70,14 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeBoolean(state);
         buf.writeUuid(this.getUuid());
-        ((ServerPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadS2CPacket(ModInfo.identifierFor(ModInfo.Packets.ISO_STATE), buf));
+        ((ServerPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadS2CPacket(ModInfo.identifierFor(ModInfo.PACKET_ISO_STATE), buf));
     }
 
     private void updateClientIsoDirection(CameraDirection direction) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeString(direction.name());
         buf.writeUuid(this.getUuid());
-        ((ServerPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadS2CPacket(ModInfo.identifierFor(ModInfo.Packets.ISO_DIRECTION), buf));
+        ((ServerPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadS2CPacket(ModInfo.identifierFor(ModInfo.PACKET_ISO_DIRECTION), buf));
     }
 
     public void onCameraIsoChanged(boolean state, boolean updateRemote) {

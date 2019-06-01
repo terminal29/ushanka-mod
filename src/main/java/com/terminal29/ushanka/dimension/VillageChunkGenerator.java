@@ -21,9 +21,8 @@ public class VillageChunkGenerator extends ChunkGenerator<VillageChunkGeneratorC
 
     @Override
     public void buildSurface(Chunk chunk) {
-        boolean doGenerateInChunk = VillageIslandManager.INSTANCE.isIslandChunk(chunk.getPos());
-        if(doGenerateInChunk){
-            VillageIslandManager.INSTANCE.chunkToIsland(chunk.getPos()).buildInChunk(chunk);
+        if(VillageIslandManager.INSTANCE.isIslandChunk(chunk.getPos())){
+            VillageIslandManager.INSTANCE.chunkToIsland(chunk.getPos()).buildInChunk(this.world, chunk);
         }
     }
 
