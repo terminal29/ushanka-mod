@@ -71,9 +71,6 @@ public class VillageIsland {
                 data.setChunkPosition(chunk.getPos());
                 islandStructure.place(world, new BlockPos(0,0,0), data);
             }
-
-
-
         }
     }
 }

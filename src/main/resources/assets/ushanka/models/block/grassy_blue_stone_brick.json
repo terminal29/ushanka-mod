@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "north": "ushanka:block/grassy_blue_stone_brick",
+    "south": "ushanka:block/grassy_blue_stone_brick",
+    "east": "ushanka:block/grassy_blue_stone_brick",
+    "west": "ushanka:block/grassy_blue_stone_brick",
+    "up": "ushanka:block/grassy_top",
+    "down": "ushanka:block/blue_stone_brick"
+  }
+}

@@ -34,6 +34,15 @@ public class ModInfo {
     // Islands
     public static final String ISLAND_STRUCTURE_0 = "island_0";
 
+    // Blocks
+    public static final String BLOCK_BLUE_STONE = "blue_stone";
+    public static final String BLOCK_BLUE_STONE_BRICK = "blue_stone_brick";
+    public static final String BLOCK_BLUE_STONE_SQUARE_BRICK = "blue_stone_square_brick";
+    public static final String BLOCK_GRASSY_BLUE_STONE = "grassy_blue_stone";
+    public static final String BLOCK_GRASSY_BLUE_STONE_BRICK = "grassy_blue_stone_brick";
+    public static final String BLOCK_GRASSY_BLUE_STONE_SQUARE_BRICK = "grassy_blue_stone_square_brick";
+
+
     private static List<String> islandList = Arrays.asList(
             ISLAND_STRUCTURE_0
     );

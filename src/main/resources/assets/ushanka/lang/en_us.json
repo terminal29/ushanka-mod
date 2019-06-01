@@ -1,4 +1,11 @@
 {
   "controls.ushanka": "Ushanka",
-  "item.ushanka.ushanka": "Ushanka"
+  "item.ushanka.ushanka": "Ushanka",
+  "itemGroup.ushanka.ushanka": "Ushanka",
+  "block.ushanka.blue_stone": "Bluestone",
+  "block.ushanka.blue_stone_brick": "Bluestone Brick",
+  "block.ushanka.blue_stone_square_brick": "Bluestone Square Brick",
+  "block.ushanka.grassy_blue_stone": "Grassy Bluestone",
+  "block.ushanka.grassy_blue_stone_brick": "Grassy Bluestone Brick",
+  "block.ushanka.grassy_blue_stone_square_brick": "Grassy Bluestone Square Brick"
 }

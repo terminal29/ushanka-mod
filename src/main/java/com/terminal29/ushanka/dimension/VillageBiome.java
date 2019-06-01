@@ -22,8 +22,5 @@ public class VillageBiome extends Biome {
     }
     public VillageBiome(Biome.Settings biomeSettings) {
         super(biomeSettings);
-
     }
-
-
 }
