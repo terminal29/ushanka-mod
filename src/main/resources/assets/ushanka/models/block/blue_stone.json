@@ -1,6 +1,7 @@
 {
-  "parent": "block/cube_all",
+  "parent": "ushanka:block/block_all_1_layer",
   "textures": {
-    "all": "ushanka:block/blue_stone"
+    "base": "ushanka:block/blue_stone_base",
+    "overlay": "ushanka:block/blue_stone_overlay"
   }
 }

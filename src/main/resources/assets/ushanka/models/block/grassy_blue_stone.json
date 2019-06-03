@@ -1,11 +1,9 @@
 {
-  "parent": "block/cube",
+  "parent": "ushanka:block/block_pole_2_layer",
   "textures": {
-    "north": "ushanka:block/grassy_blue_stone",
-    "south": "ushanka:block/grassy_blue_stone",
-    "east": "ushanka:block/grassy_blue_stone",
-    "west": "ushanka:block/grassy_blue_stone",
-    "up": "ushanka:block/grassy_top",
-    "down": "ushanka:block/blue_stone"
+    "base": "ushanka:block/blue_stone_base",
+    "base_top": "ushanka:block/grassy_top",
+    "overlay_0": "ushanka:block/blue_stone_overlay",
+    "overlay_side_1": "ushanka:block/blue_stone_grassy_side_overlay"
   }
 }

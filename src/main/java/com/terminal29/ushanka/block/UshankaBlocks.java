@@ -4,6 +4,7 @@ import com.terminal29.ushanka.ModInfo;
 import com.terminal29.ushanka.item.UshankaItems;
 import net.minecraft.block.Block;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
+import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -11,15 +12,20 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class UshankaBlocks {
-    public static final Block BLUE_STONE = new Block(FabricBlockSettings.of(Material.STONE).build());
-    public static final Block BLUE_STONE_BRICK = new Block(FabricBlockSettings.of(Material.STONE).build());
-    public static final Block BLUE_STONE_SQUARE_BRICK = new Block(FabricBlockSettings.of(Material.STONE).build());
 
-    public static final Block GRASSY_BLUE_STONE = new Block(FabricBlockSettings.of(Material.STONE).build());
-    public static final Block GRASSY_BLUE_STONE_BRICK = new Block(FabricBlockSettings.of(Material.STONE).build());
-    public static final Block GRASSY_BLUE_STONE_SQUARE_BRICK = new Block(FabricBlockSettings.of(Material.STONE).build());
+
+
+
+    public static final Block BLUE_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block BLUE_STONE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block BLUE_STONE_SQUARE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+
+    public static final Block GRASSY_BLUE_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block GRASSY_BLUE_STONE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block GRASSY_BLUE_STONE_SQUARE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
 
     public static void init(){
+
         Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE), BLUE_STONE);
         Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE), new BlockItem(BLUE_STONE, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
 
