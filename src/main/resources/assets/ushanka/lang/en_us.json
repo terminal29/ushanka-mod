@@ -7,5 +7,11 @@
   "block.ushanka.blue_stone_square_brick": "Bluestone Square Brick",
   "block.ushanka.grassy_blue_stone": "Grassy Bluestone",
   "block.ushanka.grassy_blue_stone_brick": "Grassy Bluestone Brick",
-  "block.ushanka.grassy_blue_stone_square_brick": "Grassy Bluestone Square Brick"
+  "block.ushanka.grassy_blue_stone_square_brick": "Grassy Bluestone Square Brick",
+  "block.ushanka.brown_stone": "Brownstone",
+  "block.ushanka.brown_stone_inner_square": "Brownstone Inner Square",
+  "block.ushanka.brown_stone_outer_square": "Brownstone Outer Square",
+  "block.ushanka.grassy_brown_stone": "Grassy Brownstone",
+  "block.ushanka.grassy_brown_stone_inner_square": "Grassy Brownstone Inner Square",
+  "block.ushanka.grassy_brown_stone_outer_square": "Grassy Brownstone Outer Square"
 }

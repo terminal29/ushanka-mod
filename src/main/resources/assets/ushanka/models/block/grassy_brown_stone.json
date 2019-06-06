@@ -1,0 +1,9 @@
+{
+  "parent": "ushanka:block/block_pole_2_layer",
+  "textures": {
+    "base": "ushanka:block/brown_stone_base",
+    "base_top": "ushanka:block/grassy_top",
+    "overlay_0": "ushanka:block/brown_stone_overlay",
+    "overlay_side_1": "ushanka:block/blue_stone_grassy_side_overlay"
+  }
+}

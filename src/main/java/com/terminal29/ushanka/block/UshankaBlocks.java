@@ -13,9 +13,6 @@ import net.minecraft.util.registry.Registry;
 
 public class UshankaBlocks {
 
-
-
-
     public static final Block BLUE_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
     public static final Block BLUE_STONE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
     public static final Block BLUE_STONE_SQUARE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
@@ -24,25 +21,34 @@ public class UshankaBlocks {
     public static final Block GRASSY_BLUE_STONE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
     public static final Block GRASSY_BLUE_STONE_SQUARE_BRICK = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
 
+    public static final Block BROWN_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block BROWN_STONE_INNER_SQUARE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block BROWN_STONE_OUTER_SQUARE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+
+    public static final Block GRASSY_BROWN_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block GRASSY_BROWN_STONE_INNER_SQUARE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block GRASSY_BROWN_STONE_OUTER_SQUARE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+
+    static void registerBlock(Block block, Identifier identifier){
+        Registry.register(Registry.BLOCK, identifier, block);
+        Registry.register(Registry.ITEM, identifier, new BlockItem(block, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
+    }
+
     public static void init(){
+        registerBlock(BLUE_STONE, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE));
+        registerBlock(BLUE_STONE_BRICK, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE_BRICK));
+        registerBlock(BLUE_STONE_SQUARE_BRICK, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE_SQUARE_BRICK));
 
-        Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE), BLUE_STONE);
-        Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE), new BlockItem(BLUE_STONE, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
+        registerBlock(GRASSY_BLUE_STONE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE));
+        registerBlock(GRASSY_BLUE_STONE_BRICK, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE_BRICK));
+        registerBlock(GRASSY_BLUE_STONE_SQUARE_BRICK, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE_SQUARE_BRICK));
 
-        Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE_BRICK), BLUE_STONE_BRICK);
-        Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE_BRICK), new BlockItem(BLUE_STONE_BRICK, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
+        registerBlock(BROWN_STONE, ModInfo.identifierFor(ModInfo.BLOCK_BROWN_STONE));
+        registerBlock(BROWN_STONE_INNER_SQUARE, ModInfo.identifierFor(ModInfo.BLOCK_BROWN_STONE_INNER_SQUARE));
+        registerBlock(BROWN_STONE_OUTER_SQUARE, ModInfo.identifierFor(ModInfo.BLOCK_BROWN_STONE_OUTER_SQUARE));
 
-        Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE_SQUARE_BRICK), BLUE_STONE_SQUARE_BRICK);
-        Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_BLUE_STONE_SQUARE_BRICK), new BlockItem(BLUE_STONE_SQUARE_BRICK, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
-
-        Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE), GRASSY_BLUE_STONE);
-        Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE), new BlockItem(GRASSY_BLUE_STONE, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
-
-        Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE_BRICK), GRASSY_BLUE_STONE_BRICK);
-        Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE_BRICK), new BlockItem(GRASSY_BLUE_STONE_BRICK, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
-
-        Registry.register(Registry.BLOCK, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE_SQUARE_BRICK), GRASSY_BLUE_STONE_SQUARE_BRICK);
-        Registry.register(Registry.ITEM, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BLUE_STONE_SQUARE_BRICK), new BlockItem(GRASSY_BLUE_STONE_SQUARE_BRICK, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
-
+        registerBlock(GRASSY_BROWN_STONE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BROWN_STONE));
+        registerBlock(GRASSY_BROWN_STONE_INNER_SQUARE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BROWN_STONE_INNER_SQUARE));
+        registerBlock(GRASSY_BROWN_STONE_OUTER_SQUARE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BROWN_STONE_OUTER_SQUARE));
     }
 }
