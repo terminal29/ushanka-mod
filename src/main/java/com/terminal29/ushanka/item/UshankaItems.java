@@ -14,7 +14,7 @@ public class UshankaItems {
             .icon(() -> new ItemStack(new ItemUshanka(new Item.Settings())))
             .build();
 
-    private static final Item USHANKA = new ItemUshanka(new Item.Settings().itemGroup(CREATIVE_TAB).stackSize(1));
+    private static final Item USHANKA = new ItemUshanka(new Item.Settings().group(CREATIVE_TAB).maxCount(1));
 
     public static void init(){
         Registry.register(Registry.ITEM, new Identifier(ModInfo.DISPLAY_NAME, ModInfo.ITEM_USHANKA), USHANKA);

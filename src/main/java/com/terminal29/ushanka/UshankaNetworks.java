@@ -12,43 +12,43 @@ public class UshankaNetworks {
     public static void init(){
 
         // Tells server to update a players iso state
-        ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.Packets.ISO_STATE), (context, buffer) -> {
+        ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_ISO_STATE), (context, buffer) -> {
             boolean state = buffer.readBoolean();
-            System.out.println(ModInfo.Packets.ISO_STATE + " " + state);
+            System.out.println(ModInfo.PACKET_ISO_STATE + " " + state);
             ((IPlayerEntityExtension)context.getPlayer()).onCameraIsoChanged(state, false);
         });
 
         // Tells client to update a players iso state
-        ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.Packets.ISO_STATE), (context, buffer) -> {
+        ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_ISO_STATE), (context, buffer) -> {
             boolean state = buffer.readBoolean();
-            System.out.println(ModInfo.Packets.ISO_STATE + " " + state);
+            System.out.println(ModInfo.PACKET_ISO_STATE + " " + state);
             ((IPlayerEntityExtension)context.getPlayer()).onCameraIsoChanged(state, false);
         });
 
         // Tells server to update a players iso direction
-        ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.Packets.ISO_DIRECTION), (context, buffer) -> {
+        ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_ISO_DIRECTION), (context, buffer) -> {
             String direction = buffer.readString();
-            System.out.println(ModInfo.Packets.ISO_DIRECTION + " " + direction);
+            System.out.println(ModInfo.PACKET_ISO_DIRECTION + " " + direction);
             ((IPlayerEntityExtension)context.getPlayer()).onCameraDirectionChanged(IClientPlayerEntityExtension.CameraDirection.fromName(direction), false);
         });
 
         // Tells a client to update a players iso direction
-        ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.Packets.ISO_DIRECTION), (context, buffer) -> {
+        ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_ISO_DIRECTION), (context, buffer) -> {
             String direction = buffer.readString();
-            System.out.println(ModInfo.Packets.ISO_DIRECTION + " " + direction);
+            System.out.println(ModInfo.PACKET_ISO_DIRECTION + " " + direction);
             ((IPlayerEntityExtension)context.getPlayer()).onCameraDirectionChanged(IClientPlayerEntityExtension.CameraDirection.fromName(direction), false);
         });
 
         // Tells client to teleport to a dimension
-        ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.Packets.CHANGE_DIMENSION), (context, buffer) -> {
+        ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_CHANGE_DIMENSION), (context, buffer) -> {
             DimensionType dimension = DimensionType.byId(buffer.readIdentifier());
-            System.out.println(ModInfo.Packets.CHANGE_DIMENSION);
+            System.out.println(ModInfo.PACKET_CHANGE_DIMENSION);
             ((IPlayerEntityExtension)context.getPlayer()).changeToDimension(dimension);
         });
 
         // Client tells server it is ready to recieve init info
-        ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.Packets.CLIENT_READY), (context, buffer) -> {
-            System.out.println(ModInfo.Packets.CLIENT_READY);
+        ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_CLIENT_READY), (context, buffer) -> {
+            System.out.println(ModInfo.PACKET_CLIENT_READY);
             ((IServerPlayerEntityExtension)context.getPlayer()).onClientReady();
         });
     }

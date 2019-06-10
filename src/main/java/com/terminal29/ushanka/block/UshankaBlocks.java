@@ -31,7 +31,7 @@ public class UshankaBlocks {
 
     static void registerBlock(Block block, Identifier identifier){
         Registry.register(Registry.BLOCK, identifier, block);
-        Registry.register(Registry.ITEM, identifier, new BlockItem(block, new Item.Settings().itemGroup(UshankaItems.CREATIVE_TAB)));
+        Registry.register(Registry.ITEM, identifier, new BlockItem(block, new Item.Settings().group(UshankaItems.CREATIVE_TAB)));
     }
 
     public static void init(){

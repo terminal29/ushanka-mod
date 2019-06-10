@@ -145,7 +145,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
                         if (legsBlock == null && torsoBlock == null) {
                             System.out.println("Found Space to move to " + currentBlockPos + " : " + feetBlock);
                             BlockPos newPosition = feetBlock.up();
-                            asSPEntity().networkHandler.teleportRequest(this.x, this.y, newPosition.getZ(), this.yaw, this.pitch, EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag.class));
+                            asSPEntity().networkHandler.teleportRequest(this.x, this.y, newPosition.getZ(), this.yaw, this.pitch, EnumSet.of(PlayerPositionLookS2CPacket.Flag.X_ROT, PlayerPositionLookS2CPacket.Flag.Y_ROT));
                         }
                     }
                     break;
@@ -159,7 +159,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
                         if (legsBlock == null && torsoBlock == null) {
                             System.out.println("Found Space to move to " + currentBlockPos + " : " + feetBlock);
                             BlockPos newPosition = feetBlock.up();
-                            asSPEntity().networkHandler.teleportRequest(this.x, this.y, newPosition.getZ(), this.yaw, this.pitch, EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag.class));
+                            asSPEntity().networkHandler.teleportRequest(this.x, this.y, newPosition.getZ(), this.yaw, this.pitch, EnumSet.of(PlayerPositionLookS2CPacket.Flag.X_ROT, PlayerPositionLookS2CPacket.Flag.Y_ROT));
                         }
                     }
                     break;
@@ -173,7 +173,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
                         if (legsBlock == null && torsoBlock == null) {
                             System.out.println("Found Space to move to " + currentBlockPos + " : " + feetBlock);
                             BlockPos newPosition = feetBlock.up();
-                            asSPEntity().networkHandler.teleportRequest(newPosition.getX(), this.y, this.z, this.yaw, this.pitch, EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag.class));
+                            asSPEntity().networkHandler.teleportRequest(newPosition.getX(), this.y, this.z, this.yaw, this.pitch, EnumSet.of(PlayerPositionLookS2CPacket.Flag.X_ROT, PlayerPositionLookS2CPacket.Flag.Y_ROT));
                         }
                     }
                     break;
@@ -187,7 +187,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
                         if (legsBlock == null && torsoBlock == null) {
                             System.out.println("Found Space to move to " + currentBlockPos + " : " + feetBlock);
                             BlockPos newPosition = feetBlock.up();
-                            asSPEntity().networkHandler.teleportRequest(newPosition.getX(), this.y, this.z, this.yaw, this.pitch, EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag.class));
+                            asSPEntity().networkHandler.teleportRequest(newPosition.getX(), this.y, this.z, this.yaw, this.pitch, EnumSet.of(PlayerPositionLookS2CPacket.Flag.X_ROT, PlayerPositionLookS2CPacket.Flag.Y_ROT));
                         }
                     }
                     break;

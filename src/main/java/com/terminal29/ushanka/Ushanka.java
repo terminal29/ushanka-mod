@@ -1,6 +1,7 @@
 package com.terminal29.ushanka;
 
 import com.terminal29.ushanka.block.UshankaBlocks;
+import com.terminal29.ushanka.command.UshankaCommands;
 import com.terminal29.ushanka.dimension.UshankaDimensions;
 import com.terminal29.ushanka.item.UshankaItems;
 import com.terminal29.ushanka.keybind.UshankaKeybinds;
@@ -14,5 +15,6 @@ public class Ushanka implements ModInitializer {
         UshankaItems.init();
         UshankaBlocks.init();
         UshankaNetworks.init();
+        UshankaCommands.init();
     }
 }
