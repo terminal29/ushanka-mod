@@ -23,18 +23,6 @@ public class VillageIsland {
     private int id;
     boolean hasBuilt = false;
 
-    public VillageIsland(int id, ChunkPos baseChunk){
-        this.id = id;
-        islandPos = new Pair<>(
-                (int)Math.floor(baseChunk.x/(VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH+VillageIslandManager.ISLAND_CHUNK_SPACING)),
-                (int)Math.floor(baseChunk.z/(VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH+VillageIslandManager.ISLAND_CHUNK_SPACING))
-        );
-        this.baseChunk = new ChunkPos(
-                baseChunk.x * (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH+VillageIslandManager.ISLAND_CHUNK_SPACING),
-                baseChunk.z * (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH+VillageIslandManager.ISLAND_CHUNK_SPACING)
-        );
-    }
-
     public VillageIsland(int id, Pair<Integer, Integer> islandPos){
         this.id = id;
         this.islandPos = islandPos;

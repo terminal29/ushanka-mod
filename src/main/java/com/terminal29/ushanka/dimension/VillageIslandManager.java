@@ -21,8 +21,6 @@ public class VillageIslandManager {
 
     }
 
-
-
     public boolean isIslandChunk(ChunkPos pos){
         return (MathUtilities.mod(pos.x, (ISLAND_MAX_CHUNK_WIDTH + ISLAND_CHUNK_SPACING)) < ISLAND_MAX_CHUNK_WIDTH)
                 && (MathUtilities.mod(pos.z, (ISLAND_MAX_CHUNK_WIDTH + ISLAND_CHUNK_SPACING)) < ISLAND_MAX_CHUNK_WIDTH);
@@ -36,11 +34,11 @@ public class VillageIslandManager {
         if(!isIslandChunk(pos))
             return null;
         Pair<Integer, Integer> islandKey = new Pair<>(
-                (int)Math.floor(pos.x / (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH + VillageIslandManager.ISLAND_CHUNK_SPACING)),
-                (int)Math.floor(pos.z / (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH + VillageIslandManager.ISLAND_CHUNK_SPACING))
+                Math.round((float)Math.floor((float)pos.x / (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH + VillageIslandManager.ISLAND_CHUNK_SPACING))),
+                Math.round((float)Math.floor((float)pos.z / (VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH + VillageIslandManager.ISLAND_CHUNK_SPACING)))
         );
         if(!islands.containsKey(islandKey)){
-            islands.put(islandKey, new VillageIsland(0, pos));
+            islands.put(islandKey, new VillageIsland(0, islandKey));
         }
         return islands.get(islandKey);
     }

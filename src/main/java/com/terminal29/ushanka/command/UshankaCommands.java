@@ -2,6 +2,8 @@ package com.terminal29.ushanka.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.terminal29.ushanka.dimension.VillageIsland;
@@ -27,6 +29,13 @@ public class UshankaCommands {
                         .then(CommandManager.argument("filename", StringArgumentType.word())
                         .executes(UshankaCommands::onLoadIsland))
         ));
+        CommandRegistry.INSTANCE.register(false,
+                dispatcher -> dispatcher.register(
+                CommandManager.literal("goto_island")
+                .then(CommandManager.argument("x", IntegerArgumentType.integer())
+                .then(CommandManager.argument("y", IntegerArgumentType.integer())
+                .executes(UshankaCommands::onGotoIsland)
+        ))));
     }
 
     public static int onSaveIsland(CommandContext<ServerCommandSource> context){
@@ -53,6 +62,10 @@ public class UshankaCommands {
         }else{
             context.getSource().sendFeedback(new TextComponent("Error: You are not in an island chunk!"), false);
         }
+        return Command.SINGLE_SUCCESS;
+    }
+
+    public static int onGotoIsland(CommandContext<ServerCommandSource> context){
         return Command.SINGLE_SUCCESS;
     }
 }
