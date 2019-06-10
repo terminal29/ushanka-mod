@@ -11,9 +11,6 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 public class VillageChunkGenerator extends ChunkGenerator<VillageChunkGeneratorConfig> {
 
-    public static final int ISLAND_MAX_CHUNK_WIDTH = 4;
-    public static final int ISLAND_CHUNK_SPACING = 8;
-
     public VillageChunkGenerator(IWorld iWorld_1, BiomeSource biomeSource_1, VillageChunkGeneratorConfig chunkGeneratorConfig_1) {
         super(iWorld_1, biomeSource_1, chunkGeneratorConfig_1);
         VillageIslandManager.INSTANCE.setWorld(iWorld_1);

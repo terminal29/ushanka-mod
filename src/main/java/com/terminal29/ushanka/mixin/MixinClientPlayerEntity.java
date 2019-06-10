@@ -285,7 +285,6 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
     @Override
     public float getIsoDistance() {
-        System.out.println(currentIsoDistance);
         return currentIsoDistance;
     }
 

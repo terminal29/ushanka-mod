@@ -8,6 +8,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
@@ -40,25 +42,51 @@ public class VillageIsland {
         return islandPos;
     }
 
-    public void buildInChunk(IWorld world, Chunk chunk){
+    public boolean loadFromFile(IWorld world, Identifier identifier){
+        if(world instanceof ServerWorld) {
+            try {
+                ServerWorld serverWorld = (ServerWorld)world;
+                StructureManager structureManager = serverWorld.getStructureManager();
+                Structure islandStructure = structureManager.getStructure(identifier);
+                StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos)null);
+
+                islandStructure.place(world, new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ()), structurePlacementData_1);
+            }catch(Exception e){
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean saveToFile(IWorld world, Identifier identifier){
         if(world instanceof ServerWorld) {
             ServerWorld serverWorld = (ServerWorld)world;
             StructureManager structureManager = serverWorld.getStructureManager();
-            Identifier islandIdentifier = ModInfo.getStructureIdentifier(this.id);
-            Structure islandStructure = structureManager.getStructure(islandIdentifier);
-            if(islandStructure == null){
-                System.out.println("Failed to load island: " + islandIdentifier);
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        chunk.setBlockState(new BlockPos(x, 0, z), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
-                    }
-                }
-            }else{
-                StructurePlacementData data = new StructurePlacementData();
-                data.setBoundingBox(new MutableIntBoundingBox(new Vec3i(0,0,0), new Vec3i(16,128,16)));
-                data.setChunkPosition(chunk.getPos());
-                islandStructure.place(world, new BlockPos(0,0,0), data);
-            }
+            Structure islandStructure = structureManager.getStructureOrBlank(identifier);
+            StructurePlacementData data = new StructurePlacementData();
+            data.setBoundingBox(new MutableIntBoundingBox(new Vec3i(0,0,0), new Vec3i(16,128,16)));
+
+            BlockPos corner = new BlockPos(getBaseChunkPos().getStartX(), 0, getBaseChunkPos().getStartZ());
+            BlockPos size = new BlockPos(16*VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH, 128, 16*VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH);
+            islandStructure.method_15174(serverWorld, corner, size, true, Blocks.STRUCTURE_VOID);
+            islandStructure.setAuthor("");
+            return structureManager.saveStructure(identifier);
         }
+        return false;
+    }
+
+    public void buildInChunk(IWorld world, Chunk chunk) {
+        if(hasBuilt)
+            return;
+        Identifier structureIdentifier = ModInfo.getStructureIdentifier(this.id);
+        if (!this.loadFromFile(world, structureIdentifier)) {
+            System.out.println("Failed to load island: " + structureIdentifier);
+            chunk.setBlockState(new BlockPos(0, 0, 0), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
+            chunk.setBlockState(new BlockPos(16, 0, 0), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
+            chunk.setBlockState(new BlockPos(0, 0, 16), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
+            chunk.setBlockState(new BlockPos(16, 0, 16), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
+        }
+        hasBuilt = true;
     }
 }
