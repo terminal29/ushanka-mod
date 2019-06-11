@@ -4,6 +4,7 @@ import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.ModInfo;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.StructureBlockBlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructureManager;
@@ -23,7 +24,8 @@ public class VillageIsland {
     private ChunkPos baseChunk;
     private Pair<Integer, Integer> islandPos;
     private int id;
-    boolean hasBuilt = false;
+    private final Object buildLock = new Object();
+    private boolean hasBuilt = false;
 
     public VillageIsland(int id, Pair<Integer, Integer> islandPos){
         this.id = id;
@@ -43,15 +45,15 @@ public class VillageIsland {
     }
 
     public boolean loadFromFile(IWorld world, Identifier identifier){
-        if(world instanceof ServerWorld) {
+        if (world instanceof ServerWorld) {
             try {
-                ServerWorld serverWorld = (ServerWorld)world;
+                ServerWorld serverWorld = (ServerWorld) world;
                 StructureManager structureManager = serverWorld.getStructureManager();
                 Structure islandStructure = structureManager.getStructure(identifier);
-                StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos)null);
+                StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos) null);
 
                 islandStructure.place(world, new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ()), structurePlacementData_1);
-            }catch(Exception e){
+            } catch (Exception e) {
                 return false;
             }
             return true;
@@ -68,7 +70,7 @@ public class VillageIsland {
             data.setBoundingBox(new MutableIntBoundingBox(new Vec3i(0,0,0), new Vec3i(16,128,16)));
 
             BlockPos corner = new BlockPos(getBaseChunkPos().getStartX(), 0, getBaseChunkPos().getStartZ());
-            BlockPos size = new BlockPos(16*VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH, 128, 16*VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH);
+            BlockPos size = new BlockPos(16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH, 128, 16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH);
             islandStructure.method_15174(serverWorld, corner, size, true, Blocks.STRUCTURE_VOID);
             islandStructure.setAuthor("");
             return structureManager.saveStructure(identifier);
@@ -77,9 +79,14 @@ public class VillageIsland {
     }
 
     public void buildInChunk(IWorld world, Chunk chunk) {
-        if(hasBuilt)
-            return;
+
+        synchronized (buildLock) {
+            if (hasBuilt)
+                return;
+            hasBuilt = true;
+        }
         Identifier structureIdentifier = ModInfo.getStructureIdentifier(this.id);
+
         if (!this.loadFromFile(world, structureIdentifier)) {
             System.out.println("Failed to load island: " + structureIdentifier);
             chunk.setBlockState(new BlockPos(0, 0, 0), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
@@ -87,6 +94,5 @@ public class VillageIsland {
             chunk.setBlockState(new BlockPos(0, 0, 16), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
             chunk.setBlockState(new BlockPos(16, 0, 16), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
         }
-        hasBuilt = true;
     }
 }

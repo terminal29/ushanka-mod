@@ -2,10 +2,19 @@ package com.terminal29.ushanka.dimension;
 
 import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.ModInfo;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceImpl;
+import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.world.IWorld;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +25,21 @@ public class VillageIslandManager {
 
     private IWorld world;
     private Map<Pair<Integer, Integer>, VillageIsland> islands = new HashMap<>();
+
+    private static Map<String, Resource> islandStructures = new HashMap<>();
+
+    static{
+        getOrLoadStructure(ModInfo.ISLAND_STRUCTURE_0 + ".nbt");
+    }
+
+    public static Resource getOrLoadStructure(String structureName){
+        if(!islandStructures.containsKey(structureName)){
+            Resource r = new StructureResource("ushanka", ModInfo.identifierFor(structureName), VillageIslandManager.class.getClassLoader().getResourceAsStream("assets/ushanka/structures/" + structureName), null);
+            islandStructures.put(structureName, r);
+        }
+        return islandStructures.get(structureName);
+    }
+
 
     public VillageIslandManager(){
 

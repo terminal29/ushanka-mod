@@ -32,6 +32,7 @@ public class ModInfo {
     public static final String PACKET_CLIENT_READY = "client_ready";
 
     // Islands
+    public static final String STRUCTURE_REGISTRY = "structure_registry";
     public static final String ISLAND_STRUCTURE_0 = "island_0";
 
     // Blocks

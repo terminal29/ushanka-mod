@@ -1,6 +1,8 @@
 package com.terminal29.ushanka.mixin;
 
 import com.terminal29.ushanka.ModInfo;
+import com.terminal29.ushanka.dimension.VillageIsland;
+import com.terminal29.ushanka.dimension.VillageIslandManager;
 import com.terminal29.ushanka.extension.IStructureManagerExtension;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -48,23 +50,16 @@ public abstract class MixinStructureManager implements IStructureManagerExtensio
     @Final
     Set<String> namespaces;
 
+
+
     @Inject(method="getResource", at=@At(value="HEAD"), cancellable = true)
-    public void getResource(Identifier identifier_1, CallbackInfoReturnable<Resource> cbi){
-        if(identifier_1.getNamespace().compareTo(ModInfo.DISPLAY_NAME) == 0){
-            if(identifier_1.getPath().startsWith("structures/")){
-                System.out.println("Loading an ushanka structure resource from " + identifier_1.toString());
-                //Resource resource_1 = this.server.getDataManager().getResource(identifier_2);
-                ResourceManager resourceManager_1 = (ResourceManager)this.namespaceManagers.get("ushanka");
+    public void getResource(Identifier identifier, CallbackInfoReturnable<Resource> cbi){
+        if(identifier.getNamespace().compareTo(ModInfo.DISPLAY_NAME) == 0){
+            if(identifier.getPath().startsWith("structures/")){
+                System.out.println("Loading an ushanka structure resource from " + identifier.toString());
 
-                //InputStream is =
-                //System.out.println(is);
-                try{
-                    System.out.println(Arrays.toString(resourceManager_1.findResources("ushanka",(a)->true).toArray()));
-                }catch(Exception e){
-                    System.out.println(Arrays.toString(namespaces.toArray()));
-                }
-
-
+                Resource r = VillageIslandManager.getOrLoadStructure(identifier.getPath().substring(11));
+                cbi.setReturnValue(r);
             }
         }
     }
