@@ -6,7 +6,6 @@
     "MixinPlayerEntity",
     "MixinServerPlayerEntity",
     "MixinStructureManager",
-    "MixinStructure",
     "MixinServerWorld"
   ],
   "client": [
