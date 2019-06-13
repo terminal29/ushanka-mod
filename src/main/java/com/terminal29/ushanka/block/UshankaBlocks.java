@@ -29,6 +29,9 @@ public class UshankaBlocks {
     public static final Block GRASSY_BROWN_STONE_INNER_SQUARE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
     public static final Block GRASSY_BROWN_STONE_OUTER_SQUARE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
 
+    public static final Block GREY_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+    public static final Block GRASSY_GREY_STONE = new CutoutBlock(FabricBlockSettings.of(Material.STONE).build());
+
     static void registerBlock(Block block, Identifier identifier){
         Registry.register(Registry.BLOCK, identifier, block);
         Registry.register(Registry.ITEM, identifier, new BlockItem(block, new Item.Settings().group(UshankaItems.CREATIVE_TAB)));
@@ -50,5 +53,8 @@ public class UshankaBlocks {
         registerBlock(GRASSY_BROWN_STONE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BROWN_STONE));
         registerBlock(GRASSY_BROWN_STONE_INNER_SQUARE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BROWN_STONE_INNER_SQUARE));
         registerBlock(GRASSY_BROWN_STONE_OUTER_SQUARE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_BROWN_STONE_OUTER_SQUARE));
+
+        registerBlock(GREY_STONE, ModInfo.identifierFor(ModInfo.BLOCK_GREY_STONE));
+        registerBlock(GRASSY_GREY_STONE, ModInfo.identifierFor(ModInfo.BLOCK_GRASSY_GREY_STONE));
     }
 }

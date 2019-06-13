@@ -1,0 +1,7 @@
+{
+  "parent": "ushanka:block/block_all_1_layer",
+  "textures": {
+    "base": "ushanka:block/grey_stone_base",
+    "overlay": "ushanka:block/grey_stone_overlay"
+  }
+}

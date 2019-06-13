@@ -42,12 +42,16 @@ public class ModInfo {
     public static final String BLOCK_GRASSY_BLUE_STONE = "grassy_blue_stone";
     public static final String BLOCK_GRASSY_BLUE_STONE_BRICK = "grassy_blue_stone_brick";
     public static final String BLOCK_GRASSY_BLUE_STONE_SQUARE_BRICK = "grassy_blue_stone_square_brick";
+
     public static final String BLOCK_BROWN_STONE = "brown_stone";
     public static final String BLOCK_BROWN_STONE_INNER_SQUARE = "brown_stone_inner_square";
     public static final String BLOCK_BROWN_STONE_OUTER_SQUARE = "brown_stone_outer_square";
     public static final String BLOCK_GRASSY_BROWN_STONE = "grassy_brown_stone";
     public static final String BLOCK_GRASSY_BROWN_STONE_INNER_SQUARE = "grassy_brown_stone_inner_square";
     public static final String BLOCK_GRASSY_BROWN_STONE_OUTER_SQUARE = "grassy_brown_stone_outer_square";
+
+    public static final String BLOCK_GREY_STONE = "grey_stone";
+    public static final String BLOCK_GRASSY_GREY_STONE = "grassy_grey_stone";
 
 
 
