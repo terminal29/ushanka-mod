@@ -38,9 +38,7 @@ public class VillageIsland {
 
     public void safePlace(Structure structure, IWorld iWorld_1, BlockPos blockPos_1, StructurePlacementData structurePlacementData_1) {
         if(iWorld_1 instanceof ServerWorld){
-            ((IServerWorldExtension)iWorld_1).addOnTickAction( b-> {
-                structure.place(iWorld_1, blockPos_1, structurePlacementData_1);
-            });
+            ((IServerWorldExtension)iWorld_1).addOnTickAction( b-> structure.place(iWorld_1, blockPos_1, structurePlacementData_1));
         }
     }
 
@@ -70,7 +68,7 @@ public class VillageIsland {
             data.setBoundingBox(new MutableIntBoundingBox(new Vec3i(0,0,0), new Vec3i(16,128,16)));
 
             BlockPos corner = new BlockPos(getBaseChunkPos().getStartX(), 0, getBaseChunkPos().getStartZ());
-            BlockPos size = new BlockPos(16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH, 128, 16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH);
+            BlockPos size = new BlockPos(16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH - 1, 128, 16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH - 1);
             islandStructure.method_15174(serverWorld, corner, size, true, Blocks.STRUCTURE_VOID);
             islandStructure.setAuthor("");
             return structureManager.saveStructure(identifier);
@@ -89,10 +87,13 @@ public class VillageIsland {
 
         if (!this.loadFromFile(world, structureIdentifier)) {
             System.out.println("Failed to load island: " + structureIdentifier);
-            chunk.setBlockState(new BlockPos(0, 0, 0), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
-            chunk.setBlockState(new BlockPos(16, 0, 0), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
-            chunk.setBlockState(new BlockPos(0, 0, 16), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
-            chunk.setBlockState(new BlockPos(16, 0, 16), Blocks.REDSTONE_BLOCK.getDefaultState(), false);
         }
+    }
+
+    public BoundingBox getVillageBounds(){
+        BlockPos corner1 = new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ());
+        BlockPos corner2 = new BlockPos(16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH - 1, 128, 16 * VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH - 1);
+        corner2 = corner2.add(corner1.getX(), corner1.getY(), corner1.getZ());
+        return new BoundingBox(corner1, corner2);
     }
 }

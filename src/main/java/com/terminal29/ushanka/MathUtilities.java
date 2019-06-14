@@ -39,4 +39,10 @@ public class MathUtilities {
         int result = x % y;
         return result < 0? result + y : result;
     }
+
+    public static boolean isInRangeInclusive(int num, int b1, int b2){
+        int smaller = b1 < b2 ? b1 : b2;
+        int bigger = b1 < b2 ? b2 : b1;
+        return smaller <= num && num <= bigger;
+    }
 }

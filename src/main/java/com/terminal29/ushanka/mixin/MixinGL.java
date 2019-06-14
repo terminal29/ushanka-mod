@@ -109,7 +109,6 @@ public abstract class MixinGL implements IGameRenderExtension {
 
             float imageRatio = (float) this.client.window.getFramebufferWidth() / this.client.window.getFramebufferHeight();
             float isoScale = ((IClientPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoScale();
-            float isoDistance = ((IClientPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoDistance();
             float isoSlider = ((IClientPlayerEntityExtension) MinecraftClient.getInstance().player).getIsoSlider();
 
             WorldRenderer worldRenderer_1 = this.client.worldRenderer;
