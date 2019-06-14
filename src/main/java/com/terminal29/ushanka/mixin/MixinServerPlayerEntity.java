@@ -17,6 +17,7 @@ import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,8 +36,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 
     DimensionType previousDimension = null;
 
-    BlockPos previousPosition = null;
-
+    Vec3d previousPosition = new Vec3d(0,0,0);
     BlockPos previousBlockPos = new BlockPos(0, 0, 0);
 
     public MixinServerPlayerEntity(World world_1, GameProfile gameProfile_1) {
@@ -91,7 +91,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
             updateClientIsoDirection(direction);
         cameraDirection = direction;
         UshankaPersistentData.get(getServer()).setPlayerIsoDirection(this.uuid, this.cameraDirection);
-        MovementUtility.MoveToVisibleBlock(asSPEntity());
+
     }
 
     public void onDimensionChanged(DimensionType type) {
@@ -99,7 +99,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         UshankaPersistentData.get(getServer()).setPlayerIsoState(this.uuid, this.isCameraIso);
         UshankaPersistentData.get(getServer()).setPlayerIsoDirection(this.uuid, this.cameraDirection);
         previousDimension = this.dimension;
-        previousPosition = this.getBlockPos();
+        previousBlockPos = this.getBlockPos();
         changeToDimension(type);
     }
 
@@ -116,14 +116,10 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
     @Inject(method = "tick", at = @At("HEAD"))
     protected void onTick(CallbackInfo info) {
         if(isCameraIso()) {
-            if (!this.getBlockPos().isWithinDistance(previousBlockPos, 1)) {
-                previousBlockPos = this.getBlockPos();
+            if (this.getPos().distanceTo(previousPosition) > 0.1) {
+                previousPosition = this.getPos();
                 MovementUtility.MoveToVisibleBlock(asSPEntity());
             }
         }
     }
-
-
-
-
 }

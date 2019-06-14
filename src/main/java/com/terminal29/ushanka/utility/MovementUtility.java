@@ -64,10 +64,14 @@ public class MovementUtility {
                 offset = offset.subtract(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ());
                 System.out.println(offset);
 
-                Vec3d newPos = new Vec3d(newPosition.getX() + offset.getX(), newPosition.getY() + offset.getY(), newPosition.getZ() + offset.getZ());
+                Vec3d newPos = new Vec3d(
+                        newPosition.getX() + ((direction == IClientPlayerEntityExtension.CameraDirection.NORTH || direction == IClientPlayerEntityExtension.CameraDirection.SOUTH) ? offset.getX() : 0.5),
+                        newPosition.getY() + offset.getY(),
+                        newPosition.getZ() + ((direction == IClientPlayerEntityExtension.CameraDirection.EAST || direction == IClientPlayerEntityExtension.CameraDirection.WEST) ? offset.getZ() : 0.5));
                 System.out.println("Teleporting");
 
-                player.teleport((ServerWorld)player.world, newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch);
+                //player.teleport((ServerWorld)player.world, newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch);
+                player.networkHandler.teleportRequest(newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch, EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
             }
         }
     }
