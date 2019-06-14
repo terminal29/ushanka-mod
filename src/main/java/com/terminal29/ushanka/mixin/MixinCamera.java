@@ -60,6 +60,7 @@ public abstract class MixinCamera implements ICameraExtension {
     @Shadow
     private float field_18722;
 
+    @Override
     public void updateIsometric(BlockView blockView_1, Entity entity_1, boolean boolean_1, boolean boolean_2, float float_1) {
         this.ready = true;
         this.area = blockView_1;

@@ -53,8 +53,6 @@ public class ModInfo {
     public static final String BLOCK_GREY_STONE = "grey_stone";
     public static final String BLOCK_GRASSY_GREY_STONE = "grassy_grey_stone";
 
-
-
     private static List<String> islandList = Arrays.asList(
             ISLAND_STRUCTURE_0
     );

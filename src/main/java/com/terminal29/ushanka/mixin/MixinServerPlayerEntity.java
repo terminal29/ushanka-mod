@@ -62,8 +62,6 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         updateClientIsoDirection(persistentData.getPlayerIsoDirection(this.uuid));
         this.onCameraIsoChanged(persistentData.getPlayerIsoState(this.uuid), false);
         this.onCameraDirectionChanged(persistentData.getPlayerIsoDirection(this.uuid), false);
-
-
     }
 
     private void updateClientIsoState(boolean state) {

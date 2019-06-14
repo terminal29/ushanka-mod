@@ -31,12 +31,12 @@ import java.util.List;
 @Mixin(ClientPlayerEntity.class)
 public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity implements IClientPlayerEntityExtension, IPlayerEntityExtension {
 
-    private long ticks = 0;
+
     private CameraDirection currentDirection = CameraDirection.NONE;
     private CameraDirection requestedDirection = CameraDirection.NONE;
     private boolean isChangingDirection = false;
-    private float currentIsoScale = 15;
-    private float requestedIsoScale = 15;
+    private float currentIsoScale = 25;
+    private float requestedIsoScale = 25;
     private float isoSlider = 0;
     private float currentIsoDistance = 0.4f;
     private float requestedIsoDistance = 0.4f;
@@ -133,7 +133,6 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
             clientReady = true;
             tellServerClientIsReady();
         }
-        ticks++;
     }
 
     private float angleForDirection(CameraDirection direction) {
