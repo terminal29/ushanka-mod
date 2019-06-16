@@ -4,15 +4,16 @@ import com.sun.istack.internal.Nullable;
 import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.dimension.VillageIsland;
 import com.terminal29.ushanka.dimension.VillageIslandManager;
-import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BoundingBox;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.EnumSet;
 
@@ -27,57 +28,225 @@ public class MovementUtility {
         VillageIsland playerIsland = VillageIslandManager.INSTANCE.chunkToIsland(player.world.getChunk(player.getBlockPos()).getPos());
         if(playerIsland == null)
             return;
-        IClientPlayerEntityExtension.CameraDirection direction = ((IServerPlayerEntityExtension)player).getCameraDirection();
+        IsoCameraDirection direction = ((IServerPlayerEntityExtension)player).getCameraDirection();
         BoundingBox islandBB = playerIsland.getVillageBounds();
-        BlockPos islandPos = playerIsland.getBaseChunkPos().toBlockPos(0,0,0);
-        BlockPos searchStart = null, searchEnd = null;
-        switch(direction){
-            case NORTH:
-                searchStart = new BlockPos(feetBlock.getX(), feetBlock.getY(), islandBB.maxZ);
-                searchEnd = new BlockPos(feetBlock.getX(), feetBlock.getY(), islandBB.minZ);
-                break;
-            case SOUTH:
-                searchStart = new BlockPos(feetBlock.getX(), feetBlock.getY(), islandBB.minZ);
-                searchEnd = new BlockPos(feetBlock.getX(), feetBlock.getY(), islandBB.maxZ);
-                break;
-            case EAST:
-                searchStart = new BlockPos(islandBB.minX, feetBlock.getY(), feetBlock.getZ());
-                searchEnd = new BlockPos(islandBB.maxX, feetBlock.getY(), feetBlock.getZ());
-                break;
-            case WEST:
-                searchStart = new BlockPos(islandBB.maxX, feetBlock.getY(), feetBlock.getZ());
-                searchEnd = new BlockPos(islandBB.minX, feetBlock.getY(), feetBlock.getZ());
-                break;
-        }
-        if(searchStart == null || searchEnd == null)
+
+        Pair<BlockPos, BlockPos> zSnapBounds = getZSnapBoundsForDirection(feetBlock, islandBB, direction);
+        if(zSnapBounds == null)
             return;
 
-        BlockPos teleportBase = null;
-       // if() {
-       //     System.out.println("Plane collision incoming, z snapping forward.");
+        // Handle plane collision case
+        IsoCameraDirection edgeZSnapDirection;
+        if((edgeZSnapDirection = shouldEdgeZSnap(player, islandBB, direction)) != null){
+            System.out.println("Edge snapping");
+            doEdgeZSnap(player, islandBB, direction, edgeZSnapDirection);
 
-       /* }else*/ if((teleportBase = checkBlockCollision(player, searchStart, searchEnd)) != null && !teleportBase.equals(player.getBlockPos().down())){
-            System.out.println("Regular z snap occurring");
-            BlockPos teleportLegs = teleportBase.up();
-            BlockPos teleportTorso = teleportLegs.up();
-            if (player.world.getBlockState(teleportLegs).isAir() && player.world.getBlockState(teleportTorso).isAir()) {
+            if(shouldPlaceBarrier(player, islandBB, direction)){
+                System.out.println("with barrier.");
+            }
 
+        }else {
 
-                System.out.println("Moving to " + currentBlockPos + " : " + feetBlock);
-                BlockPos newPosition = teleportLegs;
-                Vec3d offset = player.getPos();
-                offset = offset.subtract(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ());
-
-                Vec3d newPos = new Vec3d(
-                        newPosition.getX() + ((direction == IClientPlayerEntityExtension.CameraDirection.NORTH || direction == IClientPlayerEntityExtension.CameraDirection.SOUTH) ? offset.getX() : 0.5),
-                        newPosition.getY() + offset.getY(),
-                        newPosition.getZ() + ((direction == IClientPlayerEntityExtension.CameraDirection.EAST || direction == IClientPlayerEntityExtension.CameraDirection.WEST) ? offset.getZ() : 0.5));
-
-                //player.teleport((ServerWorld)player.world, newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch);
-                player.networkHandler.teleportRequest(newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch, EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
-
+            // Handle normal z snapping
+            BlockPos teleportBase = checkBlockCollision(player, zSnapBounds.getLeft(), zSnapBounds.getRight());
+            if (teleportBase != null && !teleportBase.equals(player.getBlockPos().down())) {
+                System.out.println("Regular z snap occurring");
+                BlockPos teleportLegs = teleportBase.up();
+                BlockPos teleportTorso = teleportLegs.up();
+                if (player.world.getBlockState(teleportLegs).isAir() && player.world.getBlockState(teleportTorso).isAir()) {
+                    System.out.println("Moving to " + currentBlockPos + " : " + feetBlock);
+                    BlockPos newPosition = teleportLegs;
+                    teleportSmooth(player, newPosition, direction);
+                }
             }
         }
+    }
+
+    private static void doEdgeZSnap(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction, IsoCameraDirection edgeZSnapDirection){
+        Pair<BlockPos, BlockPos> edgeSnapBounds;
+        BlockPos snapTarget;
+        // Handle north-south perspective
+        if(direction == IsoCameraDirection.NORTH || direction == IsoCameraDirection.SOUTH){
+            if (edgeZSnapDirection == IsoCameraDirection.EAST) {
+                edgeSnapBounds = getZSnapBoundsForDirection(player.getBlockPos().east(), islandBB, direction);
+            } else {
+                edgeSnapBounds = getZSnapBoundsForDirection(player.getBlockPos().west(), islandBB, direction);
+            }
+            snapTarget = checkBlockCollision(player, edgeSnapBounds.getLeft(), edgeSnapBounds.getRight());
+            if (snapTarget != null) {
+                if(direction == IsoCameraDirection.NORTH){
+                    if (edgeZSnapDirection == IsoCameraDirection.EAST) {
+                        teleportSmooth(player, snapTarget.south().west(), direction);
+                    } else {
+                        teleportSmooth(player, snapTarget.south().east(), direction);
+                    }
+                }else{
+                    if (edgeZSnapDirection == IsoCameraDirection.EAST) {
+                        teleportSmooth(player, snapTarget.north().west(), direction);
+                    } else {
+                        teleportSmooth(player, snapTarget.north().east(), direction);
+                    }
+                }
+            }
+        }
+        if(direction == IsoCameraDirection.EAST || direction == IsoCameraDirection.WEST){
+            if (edgeZSnapDirection == IsoCameraDirection.NORTH) {
+                edgeSnapBounds = getZSnapBoundsForDirection(player.getBlockPos().north(), islandBB, direction);
+            } else {
+                edgeSnapBounds = getZSnapBoundsForDirection(player.getBlockPos().south(), islandBB, direction);
+            }
+            snapTarget = checkBlockCollision(player, edgeSnapBounds.getLeft(), edgeSnapBounds.getRight());
+            if (snapTarget != null) {
+                if(direction == IsoCameraDirection.EAST){
+                    if (edgeZSnapDirection == IsoCameraDirection.NORTH) {
+                        teleportSmooth(player, snapTarget.west().south(), direction);
+                    } else {
+                        teleportSmooth(player, snapTarget.west().north(), direction);
+                    }
+                }else{
+                    if (edgeZSnapDirection == IsoCameraDirection.NORTH) {
+                        teleportSmooth(player, snapTarget.east().south(), direction);
+                    } else {
+                        teleportSmooth(player, snapTarget.east().north(), direction);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void teleportSmooth(ServerPlayerEntity player, BlockPos newPosition, IsoCameraDirection direction){
+        Vec3d offset = player.getPos();
+        offset = offset.subtract(player.getBlockPos().getX(), player.getBlockPos().getY(), player.getBlockPos().getZ());
+
+        Vec3d newPos = new Vec3d(
+                newPosition.getX() + ((direction == IsoCameraDirection.NORTH || direction == IsoCameraDirection.SOUTH) ? offset.getX() : 0.5),
+                newPosition.getY() + offset.getY(),
+                newPosition.getZ() + ((direction == IsoCameraDirection.EAST || direction == IsoCameraDirection.WEST) ? offset.getZ() : 0.5));
+
+        //player.teleport((ServerWorld)player.world, newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch);
+        player.networkHandler.teleportRequest(newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch, EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
+
+    }
+
+    private static IsoCameraDirection shouldEdgeZSnap(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction){
+        Vec3d blockOffset = player.getPos();
+        BlockPos currentBlockPos = player.getBlockPos();
+        blockOffset = blockOffset.subtract(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ());
+        float margin = 0.05f;
+
+        switch(direction) {
+            case NORTH:
+            // Check right
+            if (blockOffset.x > 0.55) {
+                Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().east(), islandBB, direction);
+                BlockPos rightWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                if (rightWall != null && rightWall.getZ() >= player.getBlockPos().getZ())
+                    return IsoCameraDirection.EAST;
+                return null;
+            } else if(blockOffset.x < 0.45){
+                Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().west(), islandBB, direction);
+                BlockPos leftWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                if (leftWall != null && leftWall.getZ() >= player.getBlockPos().getZ())
+                    return IsoCameraDirection.WEST;
+                return null;
+            }
+            break;
+            case SOUTH:
+                // Check right
+                if (blockOffset.x > 0.55) {
+                    Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().east(), islandBB, direction);
+                    BlockPos rightWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                    if (rightWall != null && rightWall.getZ() <= player.getBlockPos().getZ())
+                        return IsoCameraDirection.EAST;
+                    return null;
+                } else if(blockOffset.x < 0.45){
+                    Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().west(), islandBB, direction);
+                    BlockPos leftWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                    if (leftWall != null && leftWall.getZ() <= player.getBlockPos().getZ())
+                        return IsoCameraDirection.WEST;
+                    return null;
+                }
+                break;
+            case EAST:
+                // Check right
+                if (blockOffset.z > 0.55) {
+                    Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().south(), islandBB, direction);
+                    BlockPos rightWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                    if (rightWall != null && rightWall.getX() <= player.getBlockPos().getX())
+                        return IsoCameraDirection.SOUTH;
+                    return null;
+                } else if(blockOffset.z < 0.45){
+                    Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().north(), islandBB, direction);
+                    BlockPos leftWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                    if (leftWall != null && leftWall.getX() <= player.getBlockPos().getX())
+                        return IsoCameraDirection.NORTH;
+                    return null;
+                }
+                break;
+            case WEST:
+                // Check right
+                if (blockOffset.z > 0.55) {
+                    Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().south(), islandBB, direction);
+                    BlockPos rightWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                    if (rightWall != null && rightWall.getX() >= player.getBlockPos().getX())
+                        return IsoCameraDirection.SOUTH;
+                    return null;
+                } else if(blockOffset.z < 0.45){
+                    Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos().north(), islandBB, direction);
+                    BlockPos leftWall = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+                    if (leftWall != null && leftWall.getX() >= player.getBlockPos().getX())
+                        return IsoCameraDirection.NORTH;
+                    return null;
+                }
+                break;
+        }
+        return null;
+    }
+
+    private static boolean shouldPlaceBarrier(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction){
+        return false;
+    }
+
+    // returns leg position where a collision may occur
+    @Nullable
+    private static BlockPos checkPlaneCollisionForDirection(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction) {
+        //EntitySize playerSize = player.getSize(player.getPose());
+        BoundingBox playerBox = player.getCollisionBox();
+        Vec3d blockOffset = player.getPos();
+        BlockPos currentBlockPos = player.getBlockPos();
+        blockOffset = blockOffset.subtract(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ());
+        BlockPos finalCollision = null;
+
+        switch(direction){
+            // X plane, + to - z
+            case NORTH:
+                Pair<BlockPos, BlockPos> zSnapBounds = getZSnapBoundsForDirection(currentBlockPos, islandBB, direction);
+                if(blockOffset.getX() < 0.5){
+                    // check left side blocks
+                    BlockPos torsoCollision = checkBlockCollision(player, zSnapBounds.getLeft().west().up(), zSnapBounds.getRight().west().up());
+
+                }else{
+                    // check left side blocks
+                    BlockPos torsoCollision = checkBlockCollision(player, zSnapBounds.getLeft().east().up(), zSnapBounds.getRight().east().up());
+
+                }
+        }
+        return finalCollision;
+    }
+
+    @Nullable
+    private static Pair<BlockPos, BlockPos> getZSnapBoundsForDirection(BlockPos baseBlock, BoundingBox islandBB, IsoCameraDirection direction){
+        switch(direction){
+            case NORTH:
+                return new Pair<>(new BlockPos(baseBlock.getX(), baseBlock.getY(), islandBB.maxZ), new BlockPos(baseBlock.getX(), baseBlock.getY(), islandBB.minZ));
+            case SOUTH:
+                return new Pair<>(new BlockPos(baseBlock.getX(), baseBlock.getY(), islandBB.minZ), new BlockPos(baseBlock.getX(), baseBlock.getY(), islandBB.maxZ));
+            case EAST:
+                return new Pair<>(new BlockPos(islandBB.minX, baseBlock.getY(), baseBlock.getZ()), new BlockPos(islandBB.maxX, baseBlock.getY(), baseBlock.getZ()));
+            case WEST:
+                return new Pair<>(new BlockPos(islandBB.maxX, baseBlock.getY(), baseBlock.getZ()), new BlockPos(islandBB.minX, baseBlock.getY(), baseBlock.getZ()));
+        }
+        return null;
     }
 
     @Nullable
