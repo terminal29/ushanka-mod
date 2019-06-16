@@ -1,9 +1,9 @@
 package com.terminal29.ushanka.extension;
 
-import static com.terminal29.ushanka.extension.IClientPlayerEntityExtension.CameraDirection;
+import com.terminal29.ushanka.utility.IsoCameraDirection;
 
 public interface IServerPlayerEntityExtension {
     boolean isCameraIso();
-    CameraDirection getCameraDirection();
+    IsoCameraDirection getCameraDirection();
     void onClientReady();
 }

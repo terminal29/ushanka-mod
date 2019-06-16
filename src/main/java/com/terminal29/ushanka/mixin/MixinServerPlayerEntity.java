@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.terminal29.ushanka.ModInfo;
 import com.terminal29.ushanka.UshankaPersistentData;
 import com.terminal29.ushanka.dimension.UshankaDimensions;
-import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
 import com.terminal29.ushanka.utility.MovementUtility;
@@ -25,14 +24,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.terminal29.ushanka.extension.IClientPlayerEntityExtension.CameraDirection;
+import com.terminal29.ushanka.utility.IsoCameraDirection;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements IServerPlayerEntityExtension, IPlayerEntityExtension {
     private static final int teleportSearchDistance = 20;
     boolean isCameraIso = true;
 
-    CameraDirection cameraDirection = CameraDirection.NONE;
+    IsoCameraDirection cameraDirection = IsoCameraDirection.NONE;
 
     DimensionType previousDimension = null;
 
@@ -68,7 +67,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         ((ServerPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadS2CPacket(ModInfo.identifierFor(ModInfo.PACKET_ISO_STATE), buf));
     }
 
-    private void updateClientIsoDirection(CameraDirection direction) {
+    private void updateClientIsoDirection(IsoCameraDirection direction) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeString(direction.name());
         buf.writeUuid(this.getUuid());
@@ -86,7 +85,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
         }
     }
 
-    public void onCameraDirectionChanged(IClientPlayerEntityExtension.CameraDirection direction, boolean updateRemote) {
+    public void onCameraDirectionChanged(IsoCameraDirection direction, boolean updateRemote) {
         if (updateRemote)
             updateClientIsoDirection(direction);
         cameraDirection = direction;
@@ -109,7 +108,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
     }
 
     @Override
-    public CameraDirection getCameraDirection() {
+    public IsoCameraDirection getCameraDirection() {
         return this.cameraDirection;
     }
 

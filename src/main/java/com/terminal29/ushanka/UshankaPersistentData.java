@@ -1,12 +1,8 @@
 package com.terminal29.ushanka;
 
-import com.terminal29.ushanka.dimension.UshankaDimensions;
-import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
+import com.terminal29.ushanka.utility.IsoCameraDirection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -53,7 +49,7 @@ public class UshankaPersistentData extends PersistentState {
         if(!ushankaPlayerStorage.getKeys().contains(playerUUID.toString())){
             CompoundTag tag = new CompoundTag();
             tag.putBoolean(ModInfo.PACKET_ISO_STATE, false);
-            tag.putString(ModInfo.PACKET_ISO_DIRECTION, IClientPlayerEntityExtension.CameraDirection.NONE.name());
+            tag.putString(ModInfo.PACKET_ISO_DIRECTION, IsoCameraDirection.NONE.name());
             ushankaPlayerStorage.put(playerUUID.toString(), tag);
         }
         markDirty();
@@ -70,15 +66,15 @@ public class UshankaPersistentData extends PersistentState {
         return ushankaPlayerStorage.getCompound(playerUUID.toString()).getBoolean(ModInfo.PACKET_ISO_STATE);
     }
 
-    public void setPlayerIsoDirection(UUID playerUUID, IClientPlayerEntityExtension.CameraDirection direction){
+    public void setPlayerIsoDirection(UUID playerUUID, IsoCameraDirection direction){
         setPlayerTag(playerUUID);
         ushankaPlayerStorage.getCompound(playerUUID.toString()).putString(ModInfo.PACKET_ISO_DIRECTION, direction.name());
         markDirty();
     }
 
-    public IClientPlayerEntityExtension.CameraDirection getPlayerIsoDirection(UUID playerUUID){
+    public IsoCameraDirection getPlayerIsoDirection(UUID playerUUID){
         setPlayerTag(playerUUID);
-        return IClientPlayerEntityExtension.CameraDirection.fromName(ushankaPlayerStorage.getCompound(playerUUID.toString()).getString(ModInfo.PACKET_ISO_DIRECTION));
+        return IsoCameraDirection.fromName(ushankaPlayerStorage.getCompound(playerUUID.toString()).getString(ModInfo.PACKET_ISO_DIRECTION));
     }
 
 

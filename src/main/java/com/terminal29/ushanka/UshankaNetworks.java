@@ -1,11 +1,10 @@
 package com.terminal29.ushanka;
 
-import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
+import com.terminal29.ushanka.utility.IsoCameraDirection;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionType;
 
 public class UshankaNetworks {
@@ -29,14 +28,14 @@ public class UshankaNetworks {
         ServerSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_ISO_DIRECTION), (context, buffer) -> {
             String direction = buffer.readString();
             System.out.println(ModInfo.PACKET_ISO_DIRECTION + " " + direction);
-            ((IPlayerEntityExtension)context.getPlayer()).onCameraDirectionChanged(IClientPlayerEntityExtension.CameraDirection.fromName(direction), false);
+            ((IPlayerEntityExtension)context.getPlayer()).onCameraDirectionChanged(IsoCameraDirection.fromName(direction), false);
         });
 
         // Tells a client to update a players iso direction
         ClientSidePacketRegistry.INSTANCE.register(ModInfo.identifierFor(ModInfo.PACKET_ISO_DIRECTION), (context, buffer) -> {
             String direction = buffer.readString();
             System.out.println(ModInfo.PACKET_ISO_DIRECTION + " " + direction);
-            ((IPlayerEntityExtension)context.getPlayer()).onCameraDirectionChanged(IClientPlayerEntityExtension.CameraDirection.fromName(direction), false);
+            ((IPlayerEntityExtension)context.getPlayer()).onCameraDirectionChanged(IsoCameraDirection.fromName(direction), false);
         });
 
         // Tells client to teleport to a dimension

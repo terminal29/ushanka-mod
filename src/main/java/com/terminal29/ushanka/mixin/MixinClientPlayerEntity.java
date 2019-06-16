@@ -3,10 +3,10 @@ package com.terminal29.ushanka.mixin;
 import com.mojang.authlib.GameProfile;
 import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.ModInfo;
-import com.terminal29.ushanka.dimension.UshankaDimensions;
 import com.terminal29.ushanka.extension.IGameRenderExtension;
 import com.terminal29.ushanka.extension.IClientPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IPlayerEntityExtension;
+import com.terminal29.ushanka.utility.IsoCameraDirection;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -32,8 +32,8 @@ import java.util.List;
 public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity implements IClientPlayerEntityExtension, IPlayerEntityExtension {
 
 
-    private CameraDirection currentDirection = CameraDirection.NONE;
-    private CameraDirection requestedDirection = CameraDirection.NONE;
+    private IsoCameraDirection currentDirection = IsoCameraDirection.NONE;
+    private IsoCameraDirection requestedDirection = IsoCameraDirection.NONE;
     private boolean isChangingDirection = false;
     private float currentIsoScale = 25;
     private float requestedIsoScale = 25;
@@ -58,7 +58,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
     }
 
     @Override
-    public void onCameraDirectionChanged(CameraDirection direction, boolean updateRemote){
+    public void onCameraDirectionChanged(IsoCameraDirection direction, boolean updateRemote){
         this.currentDirection = this.requestedDirection =  direction;
         if(updateRemote)
             updateServerIsoDirection(direction);
@@ -72,7 +72,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         ((ClientPlayerEntity) (Object) this).networkHandler.sendPacket(new CustomPayloadC2SPacket(new Identifier(ModInfo.DISPLAY_NAME, ModInfo.PACKET_ISO_STATE), buf));
     }
 
-    private void updateServerIsoDirection(CameraDirection direction){
+    private void updateServerIsoDirection(IsoCameraDirection direction){
         System.out.println(ModInfo.PACKET_ISO_DIRECTION + " " + direction.name());
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeString(direction.name());
@@ -100,7 +100,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
                         isoSlider = 1;
                         this.onCameraIsoChanged(true, true);
                     }
-                    if ((requestedDirection == CameraDirection.NONE)) {
+                    if ((requestedDirection == IsoCameraDirection.NONE)) {
                         requestedDirection = getClosestCameraDirection(this.yaw + 90); // not sure why i need this
                     }
                     rotateToDirection();
@@ -109,8 +109,8 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
                     if (Math.abs(isoSlider) < ISO_DEADZONE) {
                         isoSlider = 0;
                         this.onCameraIsoChanged(false, true);
-                        requestedDirection = CameraDirection.NONE;
-                        this.onCameraDirectionChanged(CameraDirection.NONE, true);
+                        requestedDirection = IsoCameraDirection.NONE;
+                        this.onCameraDirectionChanged(IsoCameraDirection.NONE, true);
                     }
                 }
             } else {
@@ -135,68 +135,68 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         }
     }
 
-    private float angleForDirection(CameraDirection direction) {
-        if (direction == CameraDirection.NORTH)
+    private float angleForDirection(IsoCameraDirection direction) {
+        if (direction == IsoCameraDirection.NORTH)
             return 180;
-        if (direction == CameraDirection.SOUTH)
+        if (direction == IsoCameraDirection.SOUTH)
             return 0;
-        if (direction == CameraDirection.EAST)
+        if (direction == IsoCameraDirection.EAST)
             return 270;
-        if (direction == CameraDirection.WEST)
+        if (direction == IsoCameraDirection.WEST)
             return 90;
         return Float.POSITIVE_INFINITY;
     }
 
     private void rotateToDirection() {
-        if (requestedDirection == CameraDirection.NORTH && currentDirection != CameraDirection.NORTH) {
+        if (requestedDirection == IsoCameraDirection.NORTH && currentDirection != IsoCameraDirection.NORTH) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.NORTH), 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.NORTH))) < YAW_DEADZONE) {
-                this.yaw = angleForDirection(CameraDirection.NORTH);
-                this.onCameraDirectionChanged(CameraDirection.NORTH, true);
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(IsoCameraDirection.NORTH), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(IsoCameraDirection.NORTH))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(IsoCameraDirection.NORTH);
+                this.onCameraDirectionChanged(IsoCameraDirection.NORTH, true);
                 isChangingDirection = false;
             }
         }
-        if (requestedDirection == CameraDirection.SOUTH && currentDirection != CameraDirection.SOUTH) {
+        if (requestedDirection == IsoCameraDirection.SOUTH && currentDirection != IsoCameraDirection.SOUTH) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.SOUTH), 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.SOUTH))) < YAW_DEADZONE) {
-                this.yaw = angleForDirection(CameraDirection.SOUTH);
-                this.onCameraDirectionChanged(CameraDirection.SOUTH, true);
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(IsoCameraDirection.SOUTH), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(IsoCameraDirection.SOUTH))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(IsoCameraDirection.SOUTH);
+                this.onCameraDirectionChanged(IsoCameraDirection.SOUTH, true);
                 isChangingDirection = false;
             }
         }
-        if (requestedDirection == CameraDirection.EAST && currentDirection != CameraDirection.EAST) {
+        if (requestedDirection == IsoCameraDirection.EAST && currentDirection != IsoCameraDirection.EAST) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.EAST), 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.EAST))) < YAW_DEADZONE) {
-                this.yaw = angleForDirection(CameraDirection.EAST);
-                this.onCameraDirectionChanged(CameraDirection.EAST, true);
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(IsoCameraDirection.EAST), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(IsoCameraDirection.EAST))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(IsoCameraDirection.EAST);
+                this.onCameraDirectionChanged(IsoCameraDirection.EAST, true);
                 isChangingDirection = false;
             }
         }
-        if (requestedDirection == CameraDirection.WEST && currentDirection != CameraDirection.WEST) {
+        if (requestedDirection == IsoCameraDirection.WEST && currentDirection != IsoCameraDirection.WEST) {
             isChangingDirection = true;
-            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(CameraDirection.WEST), 0.2f);
-            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(CameraDirection.WEST))) < YAW_DEADZONE) {
-                this.yaw = angleForDirection(CameraDirection.WEST);
-                this.onCameraDirectionChanged(CameraDirection.WEST, true);
+            this.yaw = MathUtilities.angleLerp(this.yaw, angleForDirection(IsoCameraDirection.WEST), 0.2f);
+            if (Math.abs(MathUtilities.shortAngleDist(this.yaw, angleForDirection(IsoCameraDirection.WEST))) < YAW_DEADZONE) {
+                this.yaw = angleForDirection(IsoCameraDirection.WEST);
+                this.onCameraDirectionChanged(IsoCameraDirection.WEST, true);
                 isChangingDirection = false;
             }
         }
     }
 
-    private CameraDirection getClosestCameraDirection(float angle) {
-        float northDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.NORTH));
-        float eastDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.EAST));
-        float westDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.WEST));
-        float southDistance = MathUtilities.shortAngleDist(angle, angleForDirection(CameraDirection.SOUTH));
+    private IsoCameraDirection getClosestCameraDirection(float angle) {
+        float northDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.NORTH));
+        float eastDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.EAST));
+        float westDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.WEST));
+        float southDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.SOUTH));
 
-        List<Pair<Float, CameraDirection>> directions = new ArrayList<>();
-        directions.add(new Pair<>(northDistance, CameraDirection.NORTH));
-        directions.add(new Pair<>(eastDistance, CameraDirection.EAST));
-        directions.add(new Pair<>(westDistance, CameraDirection.WEST));
-        directions.add(new Pair<>(southDistance, CameraDirection.SOUTH));
+        List<Pair<Float, IsoCameraDirection>> directions = new ArrayList<>();
+        directions.add(new Pair<>(northDistance, IsoCameraDirection.NORTH));
+        directions.add(new Pair<>(eastDistance, IsoCameraDirection.EAST));
+        directions.add(new Pair<>(westDistance, IsoCameraDirection.WEST));
+        directions.add(new Pair<>(southDistance, IsoCameraDirection.SOUTH));
 
         directions.sort(Comparator.comparing(Pair::getLeft));
 
@@ -224,44 +224,44 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
     }
 
     @Override
-    public CameraDirection getCameraDirection() {
+    public IsoCameraDirection getCameraDirection() {
         return currentDirection;
     }
 
     @Override
-    public void requestCameraDirection(CameraDirection direction) {
+    public void requestCameraDirection(IsoCameraDirection direction) {
         this.requestedDirection = direction;
     }
 
     @Override
-    public void forceCameraDirection(CameraDirection direction){
+    public void forceCameraDirection(IsoCameraDirection direction){
         this.requestedDirection = direction;
         this.onCameraDirectionChanged(direction, true);
     }
 
     @Override
     public void rotateCameraLeft() {
-        if (getCameraDirection() == CameraDirection.NORTH) {
-            requestCameraDirection(CameraDirection.WEST);
-        } else if (getCameraDirection() == CameraDirection.WEST) {
-            requestCameraDirection(CameraDirection.SOUTH);
-        } else if (getCameraDirection() == CameraDirection.SOUTH) {
-            requestCameraDirection(CameraDirection.EAST);
-        } else if (getCameraDirection() == CameraDirection.EAST) {
-            requestCameraDirection(CameraDirection.NORTH);
+        if (getCameraDirection() == IsoCameraDirection.NORTH) {
+            requestCameraDirection(IsoCameraDirection.WEST);
+        } else if (getCameraDirection() == IsoCameraDirection.WEST) {
+            requestCameraDirection(IsoCameraDirection.SOUTH);
+        } else if (getCameraDirection() == IsoCameraDirection.SOUTH) {
+            requestCameraDirection(IsoCameraDirection.EAST);
+        } else if (getCameraDirection() == IsoCameraDirection.EAST) {
+            requestCameraDirection(IsoCameraDirection.NORTH);
         }
     }
 
     @Override
     public void rotateCameraRight() {
-        if (getCameraDirection() == CameraDirection.NORTH) {
-            requestCameraDirection(CameraDirection.EAST);
-        } else if (getCameraDirection() == CameraDirection.EAST) {
-            requestCameraDirection(CameraDirection.SOUTH);
-        } else if (getCameraDirection() == CameraDirection.SOUTH) {
-            requestCameraDirection(CameraDirection.WEST);
-        } else if (getCameraDirection() == CameraDirection.WEST) {
-            requestCameraDirection(CameraDirection.NORTH);
+        if (getCameraDirection() == IsoCameraDirection.NORTH) {
+            requestCameraDirection(IsoCameraDirection.EAST);
+        } else if (getCameraDirection() == IsoCameraDirection.EAST) {
+            requestCameraDirection(IsoCameraDirection.SOUTH);
+        } else if (getCameraDirection() == IsoCameraDirection.SOUTH) {
+            requestCameraDirection(IsoCameraDirection.WEST);
+        } else if (getCameraDirection() == IsoCameraDirection.WEST) {
+            requestCameraDirection(IsoCameraDirection.NORTH);
         }
     }
 
