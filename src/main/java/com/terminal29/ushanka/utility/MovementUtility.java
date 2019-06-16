@@ -5,9 +5,7 @@ import com.terminal29.ushanka.MathUtilities;
 import com.terminal29.ushanka.dimension.VillageIsland;
 import com.terminal29.ushanka.dimension.VillageIslandManager;
 import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
-import net.minecraft.entity.EntitySize;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
@@ -35,32 +33,76 @@ public class MovementUtility {
         if(zSnapBounds == null)
             return;
 
-        // Handle plane collision case
+        boolean didSpecialSnap = false;
+
+        // Do vertical z snapping
+        Direction verticalZSnapDirection;
+        if ((verticalZSnapDirection = shouldVerticalZSnap(player, islandBB, direction)) != null) {
+            didSpecialSnap = true;
+            System.out.println("Vertical ZSnapping");
+            Pair<BlockPos, BlockPos> snapBounds = getZSnapBoundsForDirection(player.getBlockPos(), islandBB, direction);
+            if(verticalZSnapDirection == Direction.DOWN){
+                BlockPos snapTarget = checkBlockCollision(player, snapBounds.getLeft().down(), snapBounds.getRight().down());
+                if(snapTarget != null){
+                    switch(direction){
+                        case NORTH:
+                            teleportSmooth(player, snapTarget.south().up(), direction); break;
+                        case SOUTH:
+                            teleportSmooth(player, snapTarget.north().up(), direction); break;
+                        case EAST:
+                            teleportSmooth(player, snapTarget.west().up(), direction); break;
+                        case WEST:
+                            teleportSmooth(player, snapTarget.east().up(), direction); break;
+                    }
+                }
+            }else{
+                Pair<BlockPos, BlockPos> searchBounds = getZSnapBoundsForDirection(player.getBlockPos().up(2), islandBB, direction);
+                BlockPos roof = checkBlockCollision(player, searchBounds.getLeft(), searchBounds.getRight());
+                if(roof != null){
+                    switch(direction){
+                        case NORTH:
+                            teleportSmooth(player, roof.south().down(2), direction); break;
+                        case SOUTH:
+                            teleportSmooth(player, roof.north().down(2), direction); break;
+                        case EAST:
+                            teleportSmooth(player, roof.west().down(2), direction); break;
+                        case WEST:
+                            teleportSmooth(player, roof.east().down(2), direction); break;
+                    }
+                }
+            }
+        }
+
+        // Do edge z snapping (left/right)
         IsoCameraDirection edgeZSnapDirection;
         if((edgeZSnapDirection = shouldEdgeZSnap(player, islandBB, direction)) != null){
-            System.out.println("Edge snapping");
+            didSpecialSnap = true;
+            System.out.println("Edge ZSnapping");
             doEdgeZSnap(player, islandBB, direction, edgeZSnapDirection);
 
+
             if(shouldPlaceBarrier(player, islandBB, direction)){
-                System.out.println("with barrier.");
+                System.out.println("Placing Barrier");
             }
 
-        }else {
 
+        }
+
+        if(!didSpecialSnap){
             // Handle normal z snapping
             BlockPos teleportBase = checkBlockCollision(player, zSnapBounds.getLeft(), zSnapBounds.getRight());
             if (teleportBase != null && !teleportBase.equals(player.getBlockPos().down())) {
-                System.out.println("Regular z snap occurring");
+                System.out.println("Regular ZSnapping");
                 BlockPos teleportLegs = teleportBase.up();
                 BlockPos teleportTorso = teleportLegs.up();
                 if (player.world.getBlockState(teleportLegs).isAir() && player.world.getBlockState(teleportTorso).isAir()) {
                     System.out.println("Moving to " + currentBlockPos + " : " + feetBlock);
-                    BlockPos newPosition = teleportLegs;
-                    teleportSmooth(player, newPosition, direction);
+                    teleportSmooth(player, teleportLegs, direction);
                 }
             }
         }
     }
+
 
     private static void doEdgeZSnap(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction, IsoCameraDirection edgeZSnapDirection){
         Pair<BlockPos, BlockPos> edgeSnapBounds;
@@ -123,16 +165,41 @@ public class MovementUtility {
                 newPosition.getY() + offset.getY(),
                 newPosition.getZ() + ((direction == IsoCameraDirection.EAST || direction == IsoCameraDirection.WEST) ? offset.getZ() : 0.5));
 
-        //player.teleport((ServerWorld)player.world, newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch);
         player.networkHandler.teleportRequest(newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch, EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
-
     }
 
+    private static void teleportSmooth(ServerPlayerEntity player, Vec3d newPosition, IsoCameraDirection direction){
+        Vec3d offset = player.getPos();
+        offset = offset.subtract(player.getBlockPos().getX(), player.getBlockPos().getY(), player.getBlockPos().getZ());
+
+        Vec3d newPos = new Vec3d(
+                newPosition.getX() + ((direction == IsoCameraDirection.NORTH || direction == IsoCameraDirection.SOUTH) ? offset.getX() : 0.5),
+                newPosition.getY() + offset.getY(),
+                newPosition.getZ() + ((direction == IsoCameraDirection.EAST || direction == IsoCameraDirection.WEST) ? offset.getZ() : 0.5));
+
+        player.networkHandler.teleportRequest(newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch, EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
+    }
+
+    @Nullable
+    private static Direction shouldVerticalZSnap(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction){
+        if(player.isSneaking())
+            return Direction.DOWN;
+        Pair<BlockPos, BlockPos> searchBounds = getZSnapBoundsForDirection(player.getBlockPos().up(2), islandBB, direction);
+        BlockPos roof = checkBlockCollision(player, searchBounds.getLeft(), searchBounds.getRight());
+        if(roof != null && roof.equals(player.getBlockPos().up(2))){
+            Vec3d offset = player.getPos();
+            offset = offset.subtract(player.getBlockPos().getX(), player.getBlockPos().getY(), player.getBlockPos().getZ());
+            if(offset.getY() > 0.05)
+                return Direction.UP;
+        }
+        return null;
+    }
+
+    @Nullable
     private static IsoCameraDirection shouldEdgeZSnap(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction){
         Vec3d blockOffset = player.getPos();
         BlockPos currentBlockPos = player.getBlockPos();
         blockOffset = blockOffset.subtract(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ());
-        float margin = 0.05f;
 
         switch(direction) {
             case NORTH:

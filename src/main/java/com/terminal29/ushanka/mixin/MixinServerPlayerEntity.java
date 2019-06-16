@@ -115,7 +115,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
     @Inject(method = "tick", at = @At("HEAD"))
     protected void onTick(CallbackInfo info) {
         if(isCameraIso()) {
-            if (this.getPos().distanceTo(previousPosition) > 0.05) {
+            if (this.getPos().distanceTo(previousPosition) > 0.05 || this.isSneaking()) {
                 previousPosition = this.getPos();
                 MovementUtility.MoveToVisibleBlock(asSPEntity());
             }
