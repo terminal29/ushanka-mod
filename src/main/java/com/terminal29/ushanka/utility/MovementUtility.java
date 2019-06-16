@@ -12,6 +12,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BoundingBox;
 import net.minecraft.util.math.Vec3d;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.EnumSet;
 
@@ -51,27 +52,30 @@ public class MovementUtility {
         if(searchStart == null || searchEnd == null)
             return;
 
-        BlockPos teleportGround = checkBlockCollision(player, searchStart, searchEnd);
-        System.out.println(searchStart + ":" + searchEnd);
-        if(teleportGround != null){
-            BlockPos teleportLegs = teleportGround.up();
-            BlockPos teleportTorso = teleportLegs.up();
-            if(player.world.getBlockState(teleportLegs).isAir() && player.world.getBlockState(teleportTorso).isAir()) {
+        BlockPos teleportBase = null;
+       // if() {
+       //     System.out.println("Plane collision incoming, z snapping forward.");
 
-                System.out.println("Found Space to move to " + currentBlockPos + " : " + feetBlock);
+       /* }else*/ if((teleportBase = checkBlockCollision(player, searchStart, searchEnd)) != null && !teleportBase.equals(player.getBlockPos().down())){
+            System.out.println("Regular z snap occurring");
+            BlockPos teleportLegs = teleportBase.up();
+            BlockPos teleportTorso = teleportLegs.up();
+            if (player.world.getBlockState(teleportLegs).isAir() && player.world.getBlockState(teleportTorso).isAir()) {
+
+
+                System.out.println("Moving to " + currentBlockPos + " : " + feetBlock);
                 BlockPos newPosition = teleportLegs;
                 Vec3d offset = player.getPos();
                 offset = offset.subtract(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ());
-                System.out.println(offset);
 
                 Vec3d newPos = new Vec3d(
                         newPosition.getX() + ((direction == IClientPlayerEntityExtension.CameraDirection.NORTH || direction == IClientPlayerEntityExtension.CameraDirection.SOUTH) ? offset.getX() : 0.5),
                         newPosition.getY() + offset.getY(),
                         newPosition.getZ() + ((direction == IClientPlayerEntityExtension.CameraDirection.EAST || direction == IClientPlayerEntityExtension.CameraDirection.WEST) ? offset.getZ() : 0.5));
-                System.out.println("Teleporting");
 
                 //player.teleport((ServerWorld)player.world, newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch);
                 player.networkHandler.teleportRequest(newPos.getX(), newPos.getY(), newPos.getZ(), player.yaw, player.pitch, EnumSet.allOf(PlayerPositionLookS2CPacket.Flag.class));
+
             }
         }
     }
