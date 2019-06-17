@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "ushanka_color=white": { "model": "ushanka:block/pipe" },
+    "ushanka_color=orange": { "model": "ushanka:block/pipe" },
+    "ushanka_color=magenta": { "model": "ushanka:block/pipe" },
+    "ushanka_color=light_blue": { "model": "ushanka:block/pipe" },
+    "ushanka_color=yellow": { "model": "ushanka:block/pipe" },
+    "ushanka_color=lime": { "model": "ushanka:block/pipe" },
+    "ushanka_color=pink": { "model": "ushanka:block/pipe" },
+    "ushanka_color=gray": { "model": "ushanka:block/pipe" },
+    "ushanka_color=light_gray": { "model": "ushanka:block/pipe" },
+    "ushanka_color=cyan": { "model": "ushanka:block/pipe" },
+    "ushanka_color=purple": { "model": "ushanka:block/pipe" },
+    "ushanka_color=blue": { "model": "ushanka:block/pipe" },
+    "ushanka_color=brown": { "model": "ushanka:block/pipe" },
+    "ushanka_color=green": { "model": "ushanka:block/pipe" },
+    "ushanka_color=red": { "model": "ushanka:block/pipe" },
+    "ushanka_color=black": { "model": "ushanka:block/pipe" }
+  }
+}

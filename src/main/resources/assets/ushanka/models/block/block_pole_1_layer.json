@@ -1,0 +1,71 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "#base",
+    "down": "#end",
+    "up": "#end",
+    "north": "#base",
+    "east": "#base",
+    "south": "#base",
+    "west": "#base",
+    "overlay_side": "#overlay_side"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#base"
+        },
+        "south": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#base"
+        },
+        "west": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#base"
+        },
+        "east": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#base"
+        },
+        "up": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#end"
+        },
+        "down": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#end"
+        }
+      }
+    },
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#overlay_side",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#overlay_side",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#overlay_side",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#overlay_side",
+          "tintindex": 0
+        }
+      }
+    }
+  ]
+}
