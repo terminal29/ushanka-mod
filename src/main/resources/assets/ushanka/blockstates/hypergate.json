@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=north": { "model": "ushanka:block/hypergate_ns" },
+    "facing=south": { "model": "ushanka:block/hypergate_ns" },
+    "facing=east": { "model": "ushanka:block/hypergate_ew" },
+    "facing=west": { "model": "ushanka:block/hypergate_ew" },
+    "facing=up": { "model": "minecraft:block/obsidian" },
+    "facing=down": { "model": "minecraft:block/obsidian" }
+  }
+}

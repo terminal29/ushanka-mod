@@ -36,6 +36,9 @@ public class ModInfo {
     public static final String ISLAND_STRUCTURE_0 = "island_0";
 
     // Blocks
+    public static final String BLOCK_HYPERGATE = "hypergate";
+    public static final String BLOCK_ENTITY_HYPERGATE = "hypergate_block_entity";
+
     public static final String BLOCK_BLUE_STONE = "blue_stone";
     public static final String BLOCK_BLUE_STONE_BRICK = "blue_stone_brick";
     public static final String BLOCK_BLUE_STONE_SQUARE_BRICK = "blue_stone_square_brick";

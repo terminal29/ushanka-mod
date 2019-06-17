@@ -46,7 +46,7 @@ chatHeightFocused:1.0
 chatHeightUnfocused:0.44366195797920227
 chatScale:1.0
 chatWidth:1.0
-mipmapLevels:4
+mipmapLevels:0
 useNativeTransport:true
 mainHand:right
 attackIndicator:1
@@ -92,7 +92,7 @@ key_key.controls.ushanka.iso_scale_down:key.keyboard.k
 key_key.controls.ushanka.iso_camera_left:key.keyboard.j
 key_key.controls.ushanka.iso_camera_right:key.keyboard.l
 key_key.controls.ushanka.iso_camera_toggle:key.keyboard.o
-soundCategory_master:1.0
+soundCategory_master:0.044701986
 soundCategory_music:1.0
 soundCategory_record:1.0
 soundCategory_weather:1.0
