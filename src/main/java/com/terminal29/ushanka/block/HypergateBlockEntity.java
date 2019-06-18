@@ -30,7 +30,9 @@ public class HypergateBlockEntity extends BlockEntity implements Tickable {
     @Nullable
     public VillageIsland getTargetIsland(){
         Direction direction = getCachedState().get(Properties.FACING);
-        ChunkPos thisIsland = VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(this.getPos())).getBaseChunkPos();
+        VillageIsland island = VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(this.getPos()));
+        if(island == null) return null;
+        ChunkPos thisIsland = island.getBaseChunkPos();
         ChunkPos targetIslandPos;
         switch(direction){
             case NORTH:
