@@ -12,7 +12,9 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.render.*;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.Matrix4f;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
@@ -147,7 +149,12 @@ public abstract class MixinGL implements IGameRenderExtension {
             Frustum frustum_1 = GlMatrixFrustum.get();
             this.client.getProfiler().swap("clear");
             GlStateManager.viewport(0, 0, this.client.window.getFramebufferWidth(), this.client.window.getFramebufferHeight());
-            this.backgroundRenderer.renderBackground(camera_1, float_1);
+            //this.backgroundRenderer.renderBackground(camera_1, float_1);
+            Vec3d skyColor = new Vec3d(1,1,1);
+            if(VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(MinecraftClient.getInstance().player.getBlockPos())) != null){
+                skyColor = VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(MinecraftClient.getInstance().player.getBlockPos())).getSkyColor();
+            }
+            GlStateManager.clearColor((float)skyColor.x, (float)skyColor.y, (float)skyColor.z, 0.0F);
             GlStateManager.clear(16640, MinecraftClient.IS_SYSTEM_MAC);
             this.client.getProfiler().swap("culling");
             VisibleRegion visibleRegion_1 = new FrustumWithOrigin(frustum_1);

@@ -62,11 +62,6 @@ public class DimensionVillage extends Dimension {
         return UshankaDimensions.VILLAGE;
     }
 
-    @Override
-    public float[] getBackgroundColor(float float_1, float float_2) {
-        return super.getBackgroundColor(float_1, float_2);
-    }
-
     public static Vec3d getSkyColor(BlockPos pos){
         try {
             return VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(pos)).getSkyColor();
