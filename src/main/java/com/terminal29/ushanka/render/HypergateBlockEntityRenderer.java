@@ -169,17 +169,17 @@ public class HypergateBlockEntityRenderer extends BlockEntityRenderer<HypergateB
             }
 
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.NORTH)) {
-                bufferBuilder_1.vertex(x - offset, y + offset, z - zoffset).texture(xPos,1).color(1, 1, 1, 1.0F).next();
-                bufferBuilder_1.vertex(x + 2 * offset, y + offset, z - zoffset).texture(xPos + (48.0/256),1).color(1, 1, 1, 1.0F).next();
-                bufferBuilder_1.vertex(x + 2 * offset, y, z - zoffset).texture(xPos + (48.0/256),0).color(1, 1, 1, 1.0F).next();
-                bufferBuilder_1.vertex(x - offset, y, z - zoffset).texture(xPos,0).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x - offset, y + offset, z - zoffset).texture(xPos + (48.0/256),0).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x + 2 * offset, y + offset, z - zoffset).texture(xPos,0).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x + 2 * offset, y, z - zoffset).texture(xPos,1).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x - offset, y, z - zoffset).texture(xPos + (48.0/256),1).color(1, 1, 1, 1.0F).next();
             }
 
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.EAST)) {
-                bufferBuilder_1.vertex(x + offset + zoffset, y + offset, z - offset).texture(xPos,1).color(1, 1, 1, 1.0F).next();
-                bufferBuilder_1.vertex(x + offset + zoffset, y + offset, z + 2 * offset).texture(xPos + (48.0/256),1).color(1, 1, 1, 1.0F).next();
-                bufferBuilder_1.vertex(x + offset + zoffset, y, z + 2 * offset).texture(xPos + (48.0/256),0).color(1, 1, 1, 1.0F).next();
-                bufferBuilder_1.vertex(x + offset + zoffset, y, z - offset).texture(xPos,0).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x + offset + zoffset, y + offset, z - offset).texture(xPos + (48.0/256),0).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x + offset + zoffset, y + offset, z + 2 * offset).texture(xPos,0).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x + offset + zoffset, y, z + 2 * offset).texture(xPos,1).color(1, 1, 1, 1.0F).next();
+                bufferBuilder_1.vertex(x + offset + zoffset, y, z - offset).texture(xPos + (48.0/256),1).color(1, 1, 1, 1.0F).next();
             }
 
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.WEST)) {
