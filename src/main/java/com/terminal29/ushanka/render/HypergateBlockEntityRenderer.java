@@ -154,8 +154,7 @@ public class HypergateBlockEntityRenderer extends BlockEntityRenderer<HypergateB
             GlStateManager.disableLighting();
             this.bindTexture(VILLAGE_CLOUDS_TEX);
 
-            float scale = 0.2f;
-            float xPos = -(5.0F) * ((float) (SystemUtil.getMeasuringTimeMs() % 800000L) / 800000.0F) + blockEntity_1.getPos().getX()*0.1415926535f + blockEntity_1.getPos().getX()*0.1345234563f + blockEntity_1.getPos().getY()*0.12323423f;
+            float xPos = -(5.0F) * ((float) (SystemUtil.getMeasuringTimeMs() % 800000L) / 800000.0F) + blockEntity_1.getPos().getX()*0.1415926535f + blockEntity_1.getPos().getZ()*0.1345234563f + blockEntity_1.getPos().getY()*0.12323423f;
             double offset = 1.0D;
             double zoffset = 0.001D;
             Tessellator tessellator_1 = Tessellator.getInstance();
@@ -189,13 +188,6 @@ public class HypergateBlockEntityRenderer extends BlockEntityRenderer<HypergateB
                 bufferBuilder_1.vertex(x - zoffset, y + offset, z - offset).texture(xPos,0).color(1, 1, 1, 1.0F).next();
             }
             tessellator_1.draw();
-/*
-            GlStateManager.disableBlend();
-            GlStateManager.disableTexGen(GlStateManager.TexCoord.S);
-            GlStateManager.disableTexGen(GlStateManager.TexCoord.T);
-            GlStateManager.disableTexGen(GlStateManager.TexCoord.R);
-            GlStateManager.enableLighting();
-            */
             GlStateManager.enableLighting();
         }
         GlStateManager.popMatrix();

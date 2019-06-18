@@ -2,16 +2,15 @@ package com.terminal29.ushanka.utility;
 
 import com.sun.istack.internal.Nullable;
 import com.terminal29.ushanka.MathUtilities;
+import com.terminal29.ushanka.block.HypergateBlock;
+import com.terminal29.ushanka.block.HypergateBlockEntity;
 import com.terminal29.ushanka.dimension.VillageIsland;
 import com.terminal29.ushanka.dimension.VillageIslandManager;
 import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
 import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BoundingBox;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 
 import java.util.EnumSet;
 
@@ -99,6 +98,19 @@ public class MovementUtility {
                     System.out.println("Moving to " + currentBlockPos + " : " + feetBlock);
                     teleportSmooth(player, teleportLegs, direction);
                 }
+            }
+        }
+
+        Pair<BlockPos, BlockPos> rightCollisionBounds = getZSnapBoundsForDirection(player.getBlockPos(), islandBB, direction);
+        BlockPos collision = checkBlockCollision(player, rightCollisionBounds.getLeft(), rightCollisionBounds.getRight());
+        if(collision != null && player.world.getBlockState(collision).getBlock() instanceof HypergateBlock){
+            HypergateBlockEntity hypergateBlockEntity = (HypergateBlockEntity)player.world.getBlockEntity(collision);
+            BlockPos target = hypergateBlockEntity.getTargetIsland().getSpawnpoint();
+            ChunkPos targetChunk = hypergateBlockEntity.getTargetIsland().getBaseChunkPos();
+            target = target.add(targetChunk.getStartX(), 0, targetChunk.getStartZ());
+            System.out.println(player.chunkX + ":" + player.chunkZ);
+            if(player.isSneaking()){
+                teleportSmooth(player, target, direction);
             }
         }
     }
