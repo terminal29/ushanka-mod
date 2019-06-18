@@ -14,8 +14,6 @@ public class DimensionVillage extends Dimension {
         super(world_1, dimensionType_1);
     }
 
-
-
     @Override
     public ChunkGenerator<?> createChunkGenerator() {
         FixedBiomeSourceConfig cfg = new FixedBiomeSourceConfig();
@@ -45,7 +43,8 @@ public class DimensionVillage extends Dimension {
 
     @Override
     public Vec3d getFogColor(float v, float v1) {
-        return new Vec3d(135/255.0,206/255.0,235/255.0);
+
+        return getSkyColor(new BlockPos(v,10,v1));
     }
 
     @Override
@@ -63,7 +62,16 @@ public class DimensionVillage extends Dimension {
         return UshankaDimensions.VILLAGE;
     }
 
-    public Vec3d getSkyColor(){
-        return new Vec3d(94/255.0,157/255.0,52/255.0);
+    @Override
+    public float[] getBackgroundColor(float float_1, float float_2) {
+        return super.getBackgroundColor(float_1, float_2);
+    }
+
+    public static Vec3d getSkyColor(BlockPos pos){
+        try {
+            return VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(pos)).getSkyColor();
+        }catch(Exception e){
+            return new Vec3d(1,1,1);
+        }
     }
 }

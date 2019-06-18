@@ -19,7 +19,7 @@ public class MovementUtility {
 
     // Moves a player to a block if it looks like the player could stand on it from their viewpoint
     public static void MoveToVisibleBlock(ServerPlayerEntity player) {
-        System.out.println("Checking BlockPos");
+        //System.out.println("Checking BlockPos");
         BlockPos currentBlockPos = player.getBlockPos();
         BlockPos feetBlock = currentBlockPos.down();
 

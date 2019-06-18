@@ -1,6 +1,7 @@
 package com.terminal29.ushanka.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.terminal29.ushanka.ModInfo;
 import com.terminal29.ushanka.block.HypergateBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,7 +17,9 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.SystemUtil;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
@@ -48,7 +51,7 @@ public class HypergateBlockEntityRenderer extends BlockEntityRenderer<HypergateB
             GlStateManager.pushMatrix();
             float float_3 = 2.0F / (float)(18 - int_3);
             if (int_3 == 0) {
-                this.bindTexture(SKY_TEX);
+                this.bindTexture(new Identifier("minecraft","textures/block/white_wool.png"));
                 float_3 = 0.15F;
                 GlStateManager.enableBlend();
                 GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -96,38 +99,43 @@ public class HypergateBlockEntityRenderer extends BlockEntityRenderer<HypergateB
             double offset = 1.0D;
             double zoffset = 0.005D;
 
+            Vec3d targetIslandSkyColor = blockEntity_1.getTargetIsland() != null ? blockEntity_1.getTargetIsland().getSkyColor() : new Vec3d(0,0,0);
+            float r = (float)targetIslandSkyColor.x;
+            float g = (float)targetIslandSkyColor.y;
+            float b = (float)targetIslandSkyColor.z;
+
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.SOUTH)) {
-                bufferBuilder_1.vertex(double_1 - offset, double_2, double_3 + offset + zoffset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + 2*offset, double_2, double_3 + offset + zoffset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + 2*offset, double_2 + offset, double_3 + offset + zoffset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 - offset, double_2 + offset, double_3 + offset + zoffset).color(float_5, float_6, float_7, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - offset, double_2, double_3 + offset + zoffset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + 2*offset, double_2, double_3 + offset + zoffset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + 2*offset, double_2 + offset, double_3 + offset + zoffset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - offset, double_2 + offset, double_3 + offset + zoffset).color(r, g, b, 1.0F).next();
             }
 
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.NORTH)) {
-                bufferBuilder_1.vertex(double_1 - offset, double_2 + offset, double_3 - zoffset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + 2*offset, double_2 + offset, double_3 - zoffset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + 2*offset, double_2, double_3 - zoffset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 - offset, double_2, double_3 - zoffset).color(float_5, float_6, float_7, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - offset, double_2 + offset, double_3 - zoffset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + 2*offset, double_2 + offset, double_3 - zoffset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + 2*offset, double_2, double_3 - zoffset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - offset, double_2, double_3 - zoffset).color(r, g, b, 1.0F).next();
             }
 
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.EAST)) {
-                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2 + offset, double_3 - offset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2 + offset, double_3 + 2*offset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2, double_3 + 2*offset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2, double_3 - offset).color(float_5, float_6, float_7, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2 + offset, double_3 - offset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2 + offset, double_3 + 2*offset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2, double_3 + 2*offset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 + offset + zoffset, double_2, double_3 - offset).color(r, g, b, 1.0F).next();
             }
 
             if (blockEntity_1.shouldDrawSide(blockEntity_1.getCachedState(), Direction.WEST)) {
-                bufferBuilder_1.vertex(double_1 - zoffset, double_2, double_3 - offset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 - zoffset, double_2, double_3 + 2*offset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 - zoffset, double_2 + offset, double_3 + 2*offset).color(float_5, float_6, float_7, 1.0F).next();
-                bufferBuilder_1.vertex(double_1 - zoffset, double_2 + offset, double_3 - offset).color(float_5, float_6, float_7, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - zoffset, double_2, double_3 - offset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - zoffset, double_2, double_3 + 2*offset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - zoffset, double_2 + offset, double_3 + 2*offset).color(r, g, b, 1.0F).next();
+                bufferBuilder_1.vertex(double_1 - zoffset, double_2 + offset, double_3 - offset).color(r, g, b, 1.0F).next();
             }
 
             tessellator_1.draw();
             GlStateManager.popMatrix();
             GlStateManager.matrixMode(5888);
-            this.bindTexture(SKY_TEX);
+            this.bindTexture(PORTAL_TEX);
         }
 
         GlStateManager.disableBlend();

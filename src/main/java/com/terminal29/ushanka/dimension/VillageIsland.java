@@ -96,4 +96,16 @@ public class VillageIsland {
         corner2 = corner2.add(corner1.getX(), corner1.getY(), corner1.getZ());
         return new BoundingBox(corner1, corner2);
     }
+
+    public BlockPos getSpawnpoint(){
+        return new BlockPos(10,30,10);
+    }
+
+    public Vec3d getSkyColor(){
+        int color = java.awt.Color.HSBtoRGB((float)(baseChunk.x * 0.21235 + baseChunk.z * 0.3612), 0.5f, 1);
+        float r = ((color >> 16) & 0xff) / 255.0f;
+        float g = ((color >> 8) & 0xff) / 255.0f;
+        float b = (color & 0xff) / 255.0f;
+        return new Vec3d(r,g,b);
+    }
 }
