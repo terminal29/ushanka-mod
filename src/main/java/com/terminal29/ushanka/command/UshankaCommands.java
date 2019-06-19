@@ -9,6 +9,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.terminal29.ushanka.ModInfo;
 import com.terminal29.ushanka.dimension.VillageIsland;
 import com.terminal29.ushanka.dimension.VillageIslandManager;
+import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
+import com.terminal29.ushanka.utility.MovementUtility;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.command.CommandManager;
@@ -77,6 +79,19 @@ public class UshankaCommands {
     }
 
     public static int onGotoIsland(CommandContext<ServerCommandSource> context){
+        int x = context.getArgument("x", Integer.class) * (VillageIslandManager.ISLAND_CHUNK_SPACING + VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH);
+        int y = context.getArgument("y", Integer.class) * (VillageIslandManager.ISLAND_CHUNK_SPACING + VillageIslandManager.ISLAND_MAX_CHUNK_WIDTH);
+
+        try{
+            VillageIsland targetIsland = VillageIslandManager.INSTANCE.chunkToIsland(new ChunkPos(x,y));
+            BlockPos target = targetIsland.getBaseChunkPos().toBlockPos(targetIsland.getSpawnpoint().getX(), targetIsland.getSpawnpoint().getY(), targetIsland.getSpawnpoint().getZ());
+
+            context.getSource().sendFeedback(new TextComponent("Teleporting to island at ["+x+":"+y+"]"), false);
+            MovementUtility.teleportSmooth(context.getSource().getPlayer(), target, ((IServerPlayerEntityExtension)context.getSource().getPlayer()).getCameraDirection());
+        }catch(Exception e) {
+            context.getSource().sendFeedback(new TextComponent("Teleport Failed: " + e.getMessage()), false);
+        }
         return Command.SINGLE_SUCCESS;
+
     }
 }

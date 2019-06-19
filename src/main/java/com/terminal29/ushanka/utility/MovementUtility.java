@@ -168,7 +168,7 @@ public class MovementUtility {
         }
     }
 
-    private static void teleportSmooth(ServerPlayerEntity player, BlockPos newPosition, IsoCameraDirection direction){
+    public static void teleportSmooth(ServerPlayerEntity player, BlockPos newPosition, IsoCameraDirection direction){
         Vec3d offset = player.getPos();
         offset = offset.subtract(player.getBlockPos().getX(), player.getBlockPos().getY(), player.getBlockPos().getZ());
 
