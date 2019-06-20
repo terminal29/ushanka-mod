@@ -6,90 +6,55 @@ import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
 
 public class UshankaKeybinds {
-    private static KeyBinding isoScaleUp, isoScaleDown, isoCameraLeft, isoCameraRight, isoCameraToggle;
+
+    public static ExtendedKeyBinding ISO_CAMERA_LEFT;
+    public static ExtendedKeyBinding ISO_CAMERA_RIGHT;
+    public static ExtendedKeyBinding DEBUG_ISO_CAMERA_TOGGLE;
 
     public static void init() {
         KeyBindingRegistry.INSTANCE.addCategory(ModInfo.KEYBIND_CATEGORY);
-        isoScaleUp = new KeyBinding(
-                FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.KEYBIND_CATEGORY, ModInfo.KEYBIND_ISO_SCALE_UP),
-                        InputUtil.Type.KEYSYM,
-                        InputUtil.fromName("key.keyboard.i").getKeyCode(),
-                        ModInfo.KEYBIND_CATEGORY
-                ).build()
+
+        DEBUG_ISO_CAMERA_TOGGLE = new ExtendedKeyBinding(
+                ModInfo.identifierFor(ModInfo.KEYBIND_ISO_CAMERA_TOGGLE),
+                InputUtil.Type.KEYSYM,
+                InputUtil.fromName("key.keyboard.o").getKeyCode(),
+                ModInfo.KEYBIND_CATEGORY
         );
 
-        isoScaleDown = new KeyBinding(
-                FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.KEYBIND_CATEGORY, ModInfo.KEYBIND_ISO_SCALE_DOWN),
-                        InputUtil.Type.KEYSYM,
-                        InputUtil.fromName("key.keyboard.k").getKeyCode(),
-                        ModInfo.KEYBIND_CATEGORY
-                ).build()
+        ISO_CAMERA_LEFT = new ExtendedKeyBinding(
+                ModInfo.identifierFor(ModInfo.KEYBIND_ISO_CAMERA_LEFT),
+                InputUtil.Type.KEYSYM,
+                InputUtil.fromName("key.keyboard.j").getKeyCode(),
+                ModInfo.KEYBIND_CATEGORY
         );
 
-        isoCameraLeft = new KeyBinding(
-                FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.KEYBIND_CATEGORY, ModInfo.KEYBIND_ISO_CAMERA_LEFT),
-                        InputUtil.Type.KEYSYM,
-                        InputUtil.fromName("key.keyboard.j").getKeyCode(),
-                        ModInfo.KEYBIND_CATEGORY
-                ).build()
+        ISO_CAMERA_RIGHT = new ExtendedKeyBinding(
+                ModInfo.identifierFor(ModInfo.KEYBIND_ISO_CAMERA_RIGHT),
+                InputUtil.Type.KEYSYM,
+                InputUtil.fromName("key.keyboard.l").getKeyCode(),
+                ModInfo.KEYBIND_CATEGORY
         );
 
-        isoCameraRight = new KeyBinding(
-                FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.KEYBIND_CATEGORY, ModInfo.KEYBIND_ISO_CAMERA_RIGHT),
-                        InputUtil.Type.KEYSYM,
-                        InputUtil.fromName("key.keyboard.l").getKeyCode(),
-                        ModInfo.KEYBIND_CATEGORY
-                ).build()
-        );
-
-        isoCameraToggle = new KeyBinding(
-                FabricKeyBinding.Builder.create(
-                        new Identifier(ModInfo.KEYBIND_CATEGORY, ModInfo.KEYBIND_ISO_CAMERA_TOGGLE),
-                        InputUtil.Type.KEYSYM,
-                        InputUtil.fromName("key.keyboard.o").getKeyCode(),
-                        ModInfo.KEYBIND_CATEGORY
-                ).build()
-        );
-
-        isoCameraToggle.addOnPressedHandler(keyBinding -> {
+        DEBUG_ISO_CAMERA_TOGGLE.addOnPressedHandler(keyBinding -> {
             IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
             if (playerEntityExtension != null) {
                 playerEntityExtension.requestCameraIso(!playerEntityExtension.isCameraIso());
             }
         });
 
-        isoCameraLeft.addOnPressedHandler(keyBinding -> {
+        ISO_CAMERA_LEFT.addOnPressedHandler(keyBinding -> {
             IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
-            if (playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
+            if (playerEntityExtension != null && playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
                 playerEntityExtension.rotateCameraLeft();
             }
         });
 
-        isoCameraRight.addOnPressedHandler(keyBinding -> {
+        ISO_CAMERA_RIGHT.addOnPressedHandler(keyBinding -> {
             IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
-            if (playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
+            if (playerEntityExtension != null && playerEntityExtension.isCameraIso() && !playerEntityExtension.isChangingDirection()) {
                 playerEntityExtension.rotateCameraRight();
-            }
-        });
-
-        isoScaleUp.addOnHeldHandler(keyBinding -> {
-            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
-            if (playerEntityExtension.isCameraIso()) {
-                playerEntityExtension.setIsoDistance(playerEntityExtension.getIsoDistance() + 0.2f);
-            }
-        });
-
-        isoScaleDown.addOnHeldHandler(keyBinding -> {
-            IClientPlayerEntityExtension playerEntityExtension = (IClientPlayerEntityExtension) MinecraftClient.getInstance().player;
-            if (playerEntityExtension.isCameraIso()) {
-                playerEntityExtension.setIsoDistance(playerEntityExtension.getIsoDistance() - 0.2f);
             }
         });
     }
