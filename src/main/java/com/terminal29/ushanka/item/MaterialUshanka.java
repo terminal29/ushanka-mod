@@ -4,6 +4,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 
 public class MaterialUshanka implements ArmorMaterial {
 
@@ -24,7 +25,7 @@ public class MaterialUshanka implements ArmorMaterial {
 
     @Override
     public SoundEvent getEquipSound() {
-        return null;
+        return SoundEvents.ITEM_ARMOR_EQUIP_LEATHER;
     }
 
     @Override
