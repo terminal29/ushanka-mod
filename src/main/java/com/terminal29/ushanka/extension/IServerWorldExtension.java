@@ -1,7 +1,7 @@
 package com.terminal29.ushanka.extension;
 
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface IServerWorldExtension {
-    void addOnTickAction(Consumer<Boolean> action);
+    void addOnTickAction(Supplier<Boolean> action);
 }

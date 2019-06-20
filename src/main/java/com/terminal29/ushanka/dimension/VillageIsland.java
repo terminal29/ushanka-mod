@@ -38,7 +38,10 @@ public class VillageIsland {
 
     public void safePlace(Structure structure, IWorld iWorld_1, BlockPos blockPos_1, StructurePlacementData structurePlacementData_1) {
         if(iWorld_1 instanceof ServerWorld){
-            ((IServerWorldExtension)iWorld_1).addOnTickAction( b-> structure.place(iWorld_1, blockPos_1, structurePlacementData_1));
+            ((IServerWorldExtension)iWorld_1).addOnTickAction(() -> {
+                structure.place(iWorld_1, blockPos_1, structurePlacementData_1);
+                return true;
+            });
         }
     }
 
