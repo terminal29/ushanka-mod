@@ -14,6 +14,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.recipe.book.ClientRecipeBook;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.util.Identifier;
@@ -101,7 +102,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
                         this.onCameraIsoChanged(true, true);
                     }
                     if ((requestedDirection == IsoCameraDirection.NONE)) {
-                        requestedDirection = getClosestCameraDirection(this.yaw + 90); // not sure why i need this
+                        requestedDirection = getClosestCameraDirection(this);
                     }
                     rotateToDirection();
                 } else {
@@ -141,7 +142,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         if (direction == IsoCameraDirection.SOUTH)
             return 0;
         if (direction == IsoCameraDirection.EAST)
-            return 270;
+            return -90;
         if (direction == IsoCameraDirection.WEST)
             return 90;
         return Float.POSITIVE_INFINITY;
@@ -186,21 +187,18 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         }
     }
 
-    private IsoCameraDirection getClosestCameraDirection(float angle) {
-        float northDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.NORTH));
-        float eastDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.EAST));
-        float westDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.WEST));
-        float southDistance = MathUtilities.shortAngleDist(angle, angleForDirection(IsoCameraDirection.SOUTH));
-
-        List<Pair<Float, IsoCameraDirection>> directions = new ArrayList<>();
-        directions.add(new Pair<>(northDistance, IsoCameraDirection.NORTH));
-        directions.add(new Pair<>(eastDistance, IsoCameraDirection.EAST));
-        directions.add(new Pair<>(westDistance, IsoCameraDirection.WEST));
-        directions.add(new Pair<>(southDistance, IsoCameraDirection.SOUTH));
-
-        directions.sort(Comparator.comparing(Pair::getLeft));
-
-        return directions.get(0).getRight();
+    private IsoCameraDirection getClosestCameraDirection(Entity entity) {
+        switch(entity.getHorizontalFacing()){
+            case NORTH:
+                return IsoCameraDirection.NORTH;
+            case EAST:
+                return IsoCameraDirection.EAST;
+            case SOUTH:
+                return IsoCameraDirection.SOUTH;
+            case WEST:
+                return IsoCameraDirection.WEST;
+        }
+        return IsoCameraDirection.NONE;
     }
 
     @Override
