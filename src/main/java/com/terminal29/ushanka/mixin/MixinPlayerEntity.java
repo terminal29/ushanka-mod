@@ -78,9 +78,7 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
                 ((IClientPlayerEntityExtension)this).forceCameraIso(false);
             }
             this.changeToDimension(this.getPreviousDimension(), this.getPreviousPosition());
-
         }
-
     }
 
     // With help from https://github.com/StellarHorizons/Galacticraft-Rewoven/blob/master/src/main/java/com/hrznstudio/galacticraft/GalacticraftCommands.java
@@ -90,7 +88,9 @@ public abstract class MixinPlayerEntity extends LivingEntity implements IPlayerE
     }
 
     @Override
-    public void changeToDimension(DimensionType type, @Nullable BlockPos position) {
+    public void changeToDimension(@Nullable DimensionType type, @Nullable BlockPos position) {
+        if(type == null)
+            type = DimensionType.OVERWORLD;
         if(this.getServer() != null) {
             ServerWorld world = this.getServer().getWorld(type);
             if (world != null) {

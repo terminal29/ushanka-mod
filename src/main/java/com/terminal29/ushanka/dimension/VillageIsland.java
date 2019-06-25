@@ -9,6 +9,7 @@ import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.chunk.Chunk;
 
@@ -45,21 +46,19 @@ public class VillageIsland {
         }
     }
 
-    public boolean loadFromFile(IWorld world, Identifier identifier){
-        if (world instanceof ServerWorld) {
-            try {
-                ServerWorld serverWorld = (ServerWorld) world;
-                StructureManager structureManager = serverWorld.getStructureManager();
-                Structure islandStructure = structureManager.getStructure(identifier);
-                StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos) null);
-                BlockPos position = new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ());
-                safePlace(islandStructure, world, position, structurePlacementData_1);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
+    public boolean loadFromFile(Identifier identifier){
+        try {
+            ServerWorld world = VillageIslandManager.INSTANCE.getWorld();
+            StructureManager structureManager = world.getStructureManager();
+            Structure islandStructure = structureManager.getStructure(identifier);
+            StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos) null);
+            BlockPos position = new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ());
+            safePlace(islandStructure, world, position, structurePlacementData_1);
+        } catch (Exception e) {
+            return false;
         }
-        return false;
+        return true;
+
     }
 
     public boolean saveToFile(IWorld world, Identifier identifier){
@@ -79,7 +78,7 @@ public class VillageIsland {
         return false;
     }
 
-    public void buildInChunk(IWorld world, Chunk chunk) {
+    public void buildInChunk(IWorld world) {
 
         synchronized (buildLock) {
             if (hasBuilt)
@@ -88,7 +87,7 @@ public class VillageIsland {
         }
         Identifier structureIdentifier = ModInfo.getStructureIdentifier(this.id);
 
-        if (!this.loadFromFile(world, structureIdentifier)) {
+        if (!this.loadFromFile(structureIdentifier)) {
             System.out.println("Failed to load island: " + structureIdentifier);
         }
     }
@@ -101,6 +100,7 @@ public class VillageIsland {
     }
 
     public BlockPos getSpawnpoint(){
+
         return new BlockPos(26,17,21);
     }
 

@@ -1,8 +1,8 @@
-package com.terminal29.ushanka.dimension;
+package com.terminal29.ushanka.dimension.generator;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
+import com.terminal29.ushanka.dimension.VillageIslandManager;
+import com.terminal29.ushanka.dimension.generator.VillageChunkGeneratorConfig;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.source.BiomeSource;
@@ -13,14 +13,12 @@ public class VillageChunkGenerator extends ChunkGenerator<VillageChunkGeneratorC
 
     public VillageChunkGenerator(IWorld iWorld_1, BiomeSource biomeSource_1, VillageChunkGeneratorConfig chunkGeneratorConfig_1) {
         super(iWorld_1, biomeSource_1, chunkGeneratorConfig_1);
-        VillageIslandManager.INSTANCE.setWorld(iWorld_1);
+        if(iWorld_1 instanceof ServerWorld)
+            VillageIslandManager.INSTANCE.setWorld((ServerWorld)iWorld_1);
     }
 
     @Override
     public void buildSurface(Chunk chunk) {
-        if(VillageIslandManager.INSTANCE.isIslandChunk(chunk.getPos())){
-            VillageIslandManager.INSTANCE.chunkToIsland(chunk.getPos()).buildInChunk(this.world, chunk);
-        }
     }
 
     @Override

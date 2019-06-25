@@ -1,5 +1,7 @@
 package com.terminal29.ushanka.dimension;
 
+import com.terminal29.ushanka.dimension.generator.VillageChunkGenerator;
+import com.terminal29.ushanka.dimension.generator.VillageChunkGeneratorConfig;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
@@ -23,12 +25,12 @@ public class DimensionVillage extends Dimension {
 
     @Override
     public BlockPos getSpawningBlockInChunk(ChunkPos chunkPos, boolean b) {
-        return new BlockPos(0, 100, 0);
+        return VillageIslandManager.INSTANCE.getIsland(0,0).getSpawnpoint();
     }
 
     @Override
     public BlockPos getTopSpawningBlockPosition(int int_1, int int_2, boolean boolean_1) {
-        return new BlockPos(0, 100, 0);
+        return VillageIslandManager.INSTANCE.getIsland(0,0).getSpawnpoint();
     }
 
     @Override

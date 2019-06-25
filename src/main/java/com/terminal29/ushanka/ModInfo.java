@@ -13,6 +13,8 @@ public class ModInfo {
     // Dimensions
     public static final String DIMENSION_NAME = "village";
     public static final String DIMENSION_BIOME = "village";
+    public static final String ISLAND_FEATURE_NAME = "island";
+    public static final String ISLAND_STRUCTURE_PIECE = "island_piece";
 
     //Keybinds
     public static final String KEYBIND_CATEGORY = "controls." + ModInfo.DISPLAY_NAME;

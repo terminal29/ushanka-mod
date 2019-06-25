@@ -67,7 +67,7 @@ public class UshankaCommands {
             VillageIsland island = VillageIslandManager.INSTANCE.chunkToIsland(commandSource);
             String filename = context.getArgument("filename", String.class);
             context.getSource().sendFeedback(new TextComponent(String.format("Loading Island [%d:%d] as %s.", island.getBaseChunkPos().x, island.getBaseChunkPos().z, filename)), false);
-                if(island.loadFromFile(context.getSource().getWorld(), ModInfo.identifierFor(filename))) {
+                if(island.loadFromFile(ModInfo.identifierFor(filename))) {
                     context.getSource().sendFeedback(new TextComponent("Success!"), false);
                 }else{
                     context.getSource().sendFeedback(new TextComponent("Failure!"), false);

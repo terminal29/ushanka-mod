@@ -1,4 +1,4 @@
-package com.terminal29.ushanka.dimension;
+package com.terminal29.ushanka.dimension.generator;
 
 import net.minecraft.resource.ResourceImpl;
 import net.minecraft.util.Identifier;
