@@ -6,18 +6,33 @@ import com.terminal29.ushanka.block.HypergateBlock;
 import com.terminal29.ushanka.block.HypergateBlockEntity;
 import com.terminal29.ushanka.dimension.VillageIsland;
 import com.terminal29.ushanka.dimension.VillageIslandManager;
+import com.terminal29.ushanka.extension.IPlayerEntityExtension;
 import com.terminal29.ushanka.extension.IServerPlayerEntityExtension;
+import net.minecraft.block.BarrierBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.network.packet.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.*;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class MovementUtility {
+    private static Map<UUID, BlockPos> oldBarrierPos = new HashMap<>();
+    private static Map<UUID, IsoCameraDirection> oldCameraDirection = new HashMap<>();
 
     // Moves a player to a block if it looks like the player could stand on it from their viewpoint
     public static void MoveToVisibleBlock(ServerPlayerEntity player) {
+
+        if(!oldBarrierPos.containsKey(player.getUuid()))
+            oldBarrierPos.put(player.getUuid(), BlockPos.ORIGIN);
+
+        if(!oldCameraDirection.containsKey(player.getUuid()))
+            oldCameraDirection.put(player.getUuid(), IsoCameraDirection.NONE);
+
         //System.out.println("Checking BlockPos");
         BlockPos currentBlockPos = player.getBlockPos();
         BlockPos feetBlock = currentBlockPos.down();
@@ -71,6 +86,10 @@ public class MovementUtility {
                 }
             }
         }
+        if(((IServerPlayerEntityExtension) player).getCameraDirection() != oldCameraDirection.get(player.getUuid())){
+            player.world.setBlockState(oldBarrierPos.get(player.getUuid()), Blocks.AIR.getDefaultState());
+            oldCameraDirection.put(player.getUuid(), ((IServerPlayerEntityExtension) player).getCameraDirection());
+        }
 
         // Do edge z snapping (left/right)
         IsoCameraDirection edgeZSnapDirection;
@@ -79,9 +98,30 @@ public class MovementUtility {
             System.out.println("Edge ZSnapping");
             doEdgeZSnap(player, islandBB, direction, edgeZSnapDirection);
 
-
-            if(shouldPlaceBarrier(player, islandBB, direction)){
+                if(shouldPlaceBarrier(player, islandBB, direction)){
                 System.out.println("Placing Barrier");
+                Pair<BlockPos, BlockPos> bounds = getZSnapBoundsForDirection(player.getBlockPos().down(), islandBB, direction);
+                BlockPos footBlock = checkBlockCollision(player, bounds.getLeft(), bounds.getRight());
+                // FootBlock will not be null
+                player.world.setBlockState(oldBarrierPos.get(player.getUuid()), Blocks.AIR.getDefaultState());
+                switch(direction){
+                    case NORTH:
+                        player.world.setBlockState(footBlock.south(), Blocks.BARRIER.getDefaultState());
+                        oldBarrierPos.put(player.getUuid(), footBlock.south());
+                        break;
+                    case SOUTH:
+                        player.world.setBlockState(footBlock.north(), Blocks.BARRIER.getDefaultState());
+                        oldBarrierPos.put(player.getUuid(), footBlock.north());
+                        break;
+                    case EAST:
+                        player.world.setBlockState(footBlock.west(), Blocks.BARRIER.getDefaultState());
+                        oldBarrierPos.put(player.getUuid(), footBlock.west());
+                        break;
+                    case WEST:
+                        player.world.setBlockState(footBlock.east(), Blocks.BARRIER.getDefaultState());
+                        oldBarrierPos.put(player.getUuid(), footBlock.east());
+                        break;
+                }
             }
 
 
@@ -283,6 +323,10 @@ public class MovementUtility {
     }
 
     private static boolean shouldPlaceBarrier(ServerPlayerEntity player, BoundingBox islandBB, IsoCameraDirection direction){
+        Pair<BlockPos, BlockPos> bounds = getZSnapBoundsForDirection(player.getBlockPos().down(), islandBB, direction);
+        BlockPos footBlock = checkBlockCollision(player, bounds.getLeft(), bounds.getRight());
+        if(footBlock != null && player.world.getBlockState(footBlock.up()).isAir())
+            return true;
         return false;
     }
 
@@ -330,6 +374,11 @@ public class MovementUtility {
 
     @Nullable
     private static BlockPos checkBlockCollision(ServerPlayerEntity player, BlockPos start, BlockPos end){
+        return checkBlockCollision(player, start, end, true);
+    }
+
+    @Nullable
+    private static BlockPos checkBlockCollision(ServerPlayerEntity player, BlockPos start, BlockPos end, boolean ignoreBarrier){
         int xDir = start.getX() < end.getX() ? 1 : -1;
         int yDir = start.getY() < end.getY() ? 1 : -1;
         int zDir = start.getZ() < end.getZ() ? 1 : -1;
@@ -338,7 +387,7 @@ public class MovementUtility {
             for(int y = start.getY(); MathUtilities.isInRangeInclusive(y, start.getY(), end.getY()); y += yDir){
                 for(int z = start.getZ(); MathUtilities.isInRangeInclusive(z, start.getZ(), end.getZ()); z+= zDir){
                     BlockPos pos = new BlockPos(x,y,z);
-                    boolean isAir = player.world.getBlockState(pos).isAir();
+                    boolean isAir = player.world.getBlockState(pos).isAir() || (ignoreBarrier ? false : player.world.getBlockState(pos).getBlock() instanceof BarrierBlock);
                     if(!isAir)
                         return pos;
                 }
