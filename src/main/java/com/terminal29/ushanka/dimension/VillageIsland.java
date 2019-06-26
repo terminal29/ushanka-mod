@@ -53,6 +53,8 @@ public class VillageIsland {
             Structure islandStructure = structureManager.getStructure(identifier);
             StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos) null);
             BlockPos position = new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ());
+            if(islandStructure == null)
+                throw new Exception();
             safePlace(islandStructure, world, position, structurePlacementData_1);
         } catch (Exception e) {
             return false;
