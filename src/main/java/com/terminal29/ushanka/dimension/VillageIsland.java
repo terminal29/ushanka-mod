@@ -51,7 +51,7 @@ public class VillageIsland {
             ServerWorld world = VillageIslandManager.INSTANCE.getWorld();
             StructureManager structureManager = world.getStructureManager();
             Structure islandStructure = structureManager.getStructure(identifier);
-            StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(true).setChunkPosition((ChunkPos) null);
+            StructurePlacementData structurePlacementData_1 = (new StructurePlacementData()).setMirrored(BlockMirror.NONE).setRotation(BlockRotation.NONE).setIgnoreEntities(false).setChunkPosition((ChunkPos) null);
             BlockPos position = new BlockPos(baseChunk.getStartX(), 0, baseChunk.getStartZ());
             if(islandStructure == null)
                 throw new Exception();
